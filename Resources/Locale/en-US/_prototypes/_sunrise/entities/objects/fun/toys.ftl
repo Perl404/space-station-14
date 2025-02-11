@@ -144,3 +144,5 @@ ent-PlushieAnatolyLisitsyn = Anatoly Lisitsyn
     .desc = { ent-BasePlushie.desc }
 ent-PlushieEvgeniyaKrein = Evgeniya Krein
     .desc = { ent-BasePlushie.desc }
+ent-PlushieUunaMiira = Plushie Uuna Mi'Ira
+    .desc = A plush toy depicting a mysterious dark elf with pointed ears. Despite the somewhat gloomy attire, the gold-embroidered smile and glowing eyes seem to hold the warmth of distant stars.

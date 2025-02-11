@@ -885,3 +885,20 @@
         volume: 5
   - type: UseDelay
     delay: 5
+
+- type: entity
+  id: PlushieUunaMiira
+  parent: BasePlushie
+  name: UunaMiira
+  description: A plush toy depicting a mysterious dark elf with pointed ears. Despite the somewhat gloomy attire, the gold-embroidered smile and glowing eyes seem to hold the warmth of distant stars.
+  components:
+  - type: Sprite
+    sprite: _Sunrise/Objects/Fun/toys.rsi
+    state: mintypresent
+  - type: EmitSoundOnUse
+    sound:
+      collection: SQUEE
+    params:
+      volume: 5
+  - type: UseDelay
+    delay: 5
