@@ -900,5 +900,8 @@
       collection: SQUEE
     params:
       volume: 5
+  - type: EmitSoundOnCollide
+    sound:
+      path: /Audio/_Sunrise/Voice/Vulpkanin/dog_growl1.ogg
   - type: UseDelay
     delay: 5
