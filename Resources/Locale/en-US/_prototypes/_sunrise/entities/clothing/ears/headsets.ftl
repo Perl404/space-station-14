@@ -14,3 +14,6 @@ ent-ClothingHeadsetUSSPSec = Headset USSP Security
     .desc = A headset for internal affairs agent to hear the captain's last words.
 ent-ClothingHeadsetAltUSSP = Full-Headset USSP
     .desc = A headset for internal affairs agent to hear the captain's last words.
+ent-ClothingHeadsetAltDeathsquad = DSO over-ear headset
+    .desc = A modified modular intercom that is mounted on the head and accepts encryption keys.
+    .suffix = DeathSquad

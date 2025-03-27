@@ -13,3 +13,6 @@ ent-ClothingBeltReaperWebbing = chest rig
     .desc = A set of tactical webbing worn by Syndicate boarding parties.
 ent-ClothingBeltSheathSyndicate = rapier sheath
     .desc = A sinister, thin sheath, suitable for a rapier.
+ent-ClothingBeltHolsterOSOFilled = { ent-ClothingBeltHolster }
+    .suffix = Filled, OSO
+    .desc = { ent-ClothingBeltHolster.desc }
