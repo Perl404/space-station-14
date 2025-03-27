@@ -1,8 +1,8 @@
-ent-MedipenCombatInjector = Combat medi-injector
-    .desc = A sterile injector for 4-use. Containing chemicals that regenerate most types of damage.
-ent-HyposprayERT = ERT hypospray
-    .desc = A sterile injector for rapid administration of drugs to patients.
-ent-MedipenAmbuzolPlus = medipen ambuzol plus
-    .desc = An effective way to stabilize the zombie virus in patients blood. Just one application, and the zombie virus will no longer be a problem for you!
-ent-HyposprayMedical = medical hypospray
-    .desc = A sterile injector for rapid administration of drugs to patients. It contains an internal Toxin filter.
+ent-MedipenCombatInjector = Тактический мединжектор
+ent-MedipenCombatInjector-desc = Стерильный инъектор на 4 использования. Содержит химикаты, восстанавливающие большинство видов повреждений.
+ent-HyposprayERT = Гипоспрей ОБР
+ent-HyposprayERT-desc = Стерильный инъектор для быстрого введения лекарств пациентам.
+ent-MedipenAmbuzolPlus = Медипен «Амбузол Плюс»
+ent-MedipenAmbuzolPlus-desc = Эффективный способ подавить зомби-вирус в крови пациента. Всего одно применение — и вирус перестанет быть проблемой!
+ent-HyposprayMedical = Медицинский гипоспрей
+ent-HyposprayMedical-desc = Стерильный инъектор для быстрого введения лекарств пациентам. Оснащён встроенным фильтром от токсинов.
