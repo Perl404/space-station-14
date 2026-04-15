@@ -515,7 +515,7 @@ namespace Content.Server.Voting.Managers
             v.OnCancelled?.Invoke(_voteHandles[v.Id]);
             DirtyCanCallVoteAll();
         }
-        
+
         public bool CheckVoterEligibility(ICommonSession player, VoterEligibility eligibility)
         {
             if (eligibility == VoterEligibility.All)
