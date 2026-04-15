@@ -528,7 +528,7 @@ namespace Content.Server.Voting.Managers
 
                 if (eligibility == VoterEligibility.GhostMinimumPlaytime)
                 {
-                    // Sunrise-Start - Safe playtime check to avoid crash when data not loaded
+                    // Sunrise-Start
                     if (!TryGetOverallPlaytime(player, out var overallTime) ||
                         overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                         return false;
@@ -541,7 +541,7 @@ namespace Content.Server.Voting.Managers
 
             if (eligibility == VoterEligibility.MinimumPlaytime)
             {
-                // Sunrise-Start - Safe playtime check to avoid crash when data not loaded
+                // Sunrise-Start
                 if (!TryGetOverallPlaytime(player, out var overallTime) ||
                     overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                     return false;
