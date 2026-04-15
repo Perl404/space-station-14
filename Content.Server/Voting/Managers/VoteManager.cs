@@ -528,9 +528,9 @@ namespace Content.Server.Voting.Managers
 
                 if (eligibility == VoterEligibility.GhostMinimumPlaytime)
                 {
-                    if (!_playtimeManager.TryGetTrackerTime(player, PlayTimeTrackingShared.TrackerOverall, out var overallTime) || 
-                        overallTime == null || 
-                        overallTime.Value < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
+                    var playTimes = _playtimeManager.GetPlayTimes(player);
+                    if (!playTimes.TryGetValue(PlayTimeTrackingShared.TrackerOverall, out var overallTime) || 
+                        overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                         return false;
 
                     if ((int)_timing.RealTime.Subtract(ghostComp.TimeOfDeath).TotalSeconds < _cfg.GetCVar(CCVars.VotekickEligibleVoterDeathtime))
@@ -540,12 +540,12 @@ namespace Content.Server.Voting.Managers
 
             if (eligibility == VoterEligibility.MinimumPlaytime)
             {
-                if (!_playtimeManager.TryGetTrackerTime(player, PlayTimeTrackingShared.TrackerOverall, out var overallTime) || 
-                    overallTime == null || 
-                    overallTime.Value < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
+                var playtime = _playtimeManager.GetPlayTimes(player);
+                if (!playtime.TryGetValue(PlayTimeTrackingShared.TrackerOverall, out TimeSpan overallTime) || 
+                    overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                     return false;
             }
-
+        
             return true;
         }
 
