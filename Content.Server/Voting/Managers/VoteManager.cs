@@ -528,9 +528,11 @@ namespace Content.Server.Voting.Managers
 
                 if (eligibility == VoterEligibility.GhostMinimumPlaytime)
                 {
+                    // Sunrise-Start - Safe playtime check to avoid crash when data not loaded
                     if (!TryGetOverallPlaytime(player, out var overallTime) ||
                         overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                         return false;
+                    // Sunrise-End
 
                     if ((int)_timing.RealTime.Subtract(ghostComp.TimeOfDeath).TotalSeconds < _cfg.GetCVar(CCVars.VotekickEligibleVoterDeathtime))
                         return false;
@@ -539,14 +541,21 @@ namespace Content.Server.Voting.Managers
 
             if (eligibility == VoterEligibility.MinimumPlaytime)
             {
+                // Sunrise-Start - Safe playtime check to avoid crash when data not loaded
                 if (!TryGetOverallPlaytime(player, out var overallTime) ||
                     overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                     return false;
+                // Sunrise-End
             }
 
             return true;
         }
 
+        /// <summary>
+        /// Safely retrieves the overall playtime for a player.
+        /// Returns false if playtime data has not been loaded from the database yet,
+        /// instead of throwing InvalidOperationException.
+        /// </summary>
         private bool TryGetOverallPlaytime(ICommonSession player, out TimeSpan overallTime)
         {
             overallTime = default;
