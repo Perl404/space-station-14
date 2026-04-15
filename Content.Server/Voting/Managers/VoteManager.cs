@@ -528,8 +528,7 @@ namespace Content.Server.Voting.Managers
 
                 if (eligibility == VoterEligibility.GhostMinimumPlaytime)
                 {
-                    if (!_playtimeManager.TryGetTrackerTimes(player, out var playtime) ||
-                        !playtime.TryGetValue(PlayTimeTrackingShared.TrackerOverall, out TimeSpan overallTime) ||
+                    if (!TryGetOverallPlaytime(player, out var overallTime) ||
                         overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                         return false;
 
@@ -540,13 +539,27 @@ namespace Content.Server.Voting.Managers
 
             if (eligibility == VoterEligibility.MinimumPlaytime)
             {
-                if (!_playtimeManager.TryGetTrackerTimes(player, out var playtime) ||
-                    !playtime.TryGetValue(PlayTimeTrackingShared.TrackerOverall, out TimeSpan overallTime) ||
+                if (!TryGetOverallPlaytime(player, out var overallTime) ||
                     overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                     return false;
             }
 
             return true;
+        }
+
+        private bool TryGetOverallPlaytime(ICommonSession player, out TimeSpan overallTime)
+        {
+            overallTime = default;
+
+            try
+            {
+                var playTimes = _playtimeManager.GetPlayTimes(player);
+                return playTimes.TryGetValue(PlayTimeTrackingShared.TrackerOverall, out overallTime);
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
 
         public IEnumerable<IVoteHandle> ActiveVotes => _voteHandles.Values;
