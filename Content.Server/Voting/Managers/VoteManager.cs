@@ -515,29 +515,29 @@ namespace Content.Server.Voting.Managers
             v.OnCancelled?.Invoke(_voteHandles[v.Id]);
             DirtyCanCallVoteAll();
         }
-
+        
         public bool CheckVoterEligibility(ICommonSession player, VoterEligibility eligibility)
         {
             if (eligibility == VoterEligibility.All)
                 return true;
-        
+
             if (eligibility == VoterEligibility.Ghost || eligibility == VoterEligibility.GhostMinimumPlaytime)
             {
                 if (!_entityManager.TryGetComponent(player.AttachedEntity, out GhostComponent? ghostComp))
                     return false;
-        
+
                 if (eligibility == VoterEligibility.GhostMinimumPlaytime)
                 {
                     if (!_playtimeManager.TryGetTrackerTime(player, PlayTimeTrackingShared.TrackerOverall, out var overallTime) || 
                         overallTime == null || 
                         overallTime.Value < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                         return false;
-        
+
                     if ((int)_timing.RealTime.Subtract(ghostComp.TimeOfDeath).TotalSeconds < _cfg.GetCVar(CCVars.VotekickEligibleVoterDeathtime))
                         return false;
                 }
             }
-        
+
             if (eligibility == VoterEligibility.MinimumPlaytime)
             {
                 if (!_playtimeManager.TryGetTrackerTime(player, PlayTimeTrackingShared.TrackerOverall, out var overallTime) || 
@@ -545,7 +545,7 @@ namespace Content.Server.Voting.Managers
                     overallTime.Value < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                     return false;
             }
-        
+
             return true;
         }
 
