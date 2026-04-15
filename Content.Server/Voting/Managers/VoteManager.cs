@@ -520,30 +520,32 @@ namespace Content.Server.Voting.Managers
         {
             if (eligibility == VoterEligibility.All)
                 return true;
-
+        
             if (eligibility == VoterEligibility.Ghost || eligibility == VoterEligibility.GhostMinimumPlaytime)
             {
                 if (!_entityManager.TryGetComponent(player.AttachedEntity, out GhostComponent? ghostComp))
                     return false;
-
+        
                 if (eligibility == VoterEligibility.GhostMinimumPlaytime)
                 {
-                    var playtime = _playtimeManager.GetPlayTimes(player);
-                    if (!playtime.TryGetValue(PlayTimeTrackingShared.TrackerOverall, out TimeSpan overallTime) || overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
+                    if (!_playtimeManager.TryGetTrackerTime(player, PlayTimeTrackingShared.TrackerOverall, out var overallTime) || 
+                        overallTime == null || 
+                        overallTime.Value < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                         return false;
-
+        
                     if ((int)_timing.RealTime.Subtract(ghostComp.TimeOfDeath).TotalSeconds < _cfg.GetCVar(CCVars.VotekickEligibleVoterDeathtime))
                         return false;
                 }
             }
-
+        
             if (eligibility == VoterEligibility.MinimumPlaytime)
             {
-                var playtime = _playtimeManager.GetPlayTimes(player);
-                if (!playtime.TryGetValue(PlayTimeTrackingShared.TrackerOverall, out TimeSpan overallTime) || overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
+                if (!_playtimeManager.TryGetTrackerTime(player, PlayTimeTrackingShared.TrackerOverall, out var overallTime) || 
+                    overallTime == null || 
+                    overallTime.Value < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                     return false;
             }
-
+        
             return true;
         }
 
