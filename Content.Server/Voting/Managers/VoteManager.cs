@@ -545,7 +545,7 @@ namespace Content.Server.Voting.Managers
                     overallTime < TimeSpan.FromHours(_cfg.GetCVar(CCVars.VotekickEligibleVoterPlaytime)))
                     return false;
             }
-        
+
             return true;
         }
 
