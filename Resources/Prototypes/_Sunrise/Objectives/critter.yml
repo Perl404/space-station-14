@@ -1,0 +1,108 @@
+# Objectives for ghost role critters (mice, cockroaches, etc.)
+
+# Base critter objective - all critter objectives inherit from this
+- type: entity
+  abstract: true
+  parent: BaseObjective
+  id: BaseCritterObjective
+  components:
+  - type: Objective
+    difficulty: 0.1
+    issuer: objective-issuer-critter
+
+# Eat food objective
+- type: entity
+  parent: BaseCritterObjective
+  id: EatFoodObjective
+  name: Eat food objective
+  components:
+  - type: Objective
+    icon:
+      sprite: Objects/Consumable/Food/meat.rsi
+      state: plain
+  - type: NumberObjective
+    min: 5
+    max: 15
+    title: objective-condition-eat-food-title
+    description: objective-condition-eat-food-description
+  - type: EatFoodCondition
+
+# Drink liquid objective
+- type: entity
+  parent: BaseCritterObjective
+  id: DrinkLiquidObjective
+  name: Drink liquid objective
+  components:
+  - type: Objective
+    icon:
+      sprite: Objects/Consumable/Drinks/shaker.rsi
+      state: icon
+  - type: NumberObjective
+    min: 30
+    max: 100
+    title: objective-condition-drink-liquid-title
+    description: objective-condition-drink-liquid-description
+  - type: DrinkLiquidCondition
+
+# Escape alive objective
+- type: entity
+  parent: BaseCritterObjective
+  id: EscapeAliveObjective
+  name: Escape alive objective
+  components:
+  - type: Objective
+    icon:
+      sprite: Objects/Tanks/emergency.rsi
+      state: icon
+  - type: SurviveCondition
+
+# Bite things objective
+- type: entity
+  parent: BaseCritterObjective
+  id: BiteObjective
+  name: Bite things objective
+  components:
+  - type: Objective
+    icon:
+      sprite: Mobs/Species/Human/organs.rsi
+      state: tongue
+  - type: NumberObjective
+    min: 15
+    max: 40
+    title: objective-condition-bite-title
+    description: objective-condition-bite-description
+  - type: BiteCondition
+
+# Walk distance objective
+- type: entity
+  parent: BaseCritterObjective
+  id: WalkDistanceObjective
+  name: Walk distance objective
+  components:
+  - type: Objective
+    icon:
+      sprite: Objects/Misc/moproach_shoes.rsi
+      state: mopshoes
+  - type: NumberObjective
+    min: 1500
+    max: 3500
+    title: objective-condition-walk-distance-title
+    description: objective-condition-walk-distance-description
+  - type: WalkDistanceCondition
+
+# Chew paper objective
+- type: entity
+  parent: BaseCritterObjective
+  id: ChewPaperObjective
+  name: Chew paper objective
+  components:
+  - type: Objective
+    icon:
+      sprite: Objects/Misc/bureaucracy.rsi
+      state: paper
+  - type: NumberObjective
+    min: 5
+    max: 15
+    title: objective-condition-chew-paper-title
+    description: objective-condition-chew-paper-description
+  - type: ChewPaperCondition

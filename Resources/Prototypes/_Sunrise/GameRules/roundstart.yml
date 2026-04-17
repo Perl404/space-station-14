@@ -6,6 +6,13 @@
   - type: DiseaseRule
 
 - type: entity
+  id: CritterRule
+  parent: BaseGameRule
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: CritterRule
+
+- type: entity
   id: Fugitive
   parent: BaseGameRule
   categories: [ HideSpawnMenu ]
