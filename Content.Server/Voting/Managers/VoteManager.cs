@@ -551,6 +551,7 @@ namespace Content.Server.Voting.Managers
             return true;
         }
 
+        // Sunrise added start - safely retrieve playtime without throwing InvalidOperationException
         /// <summary>
         /// Safely retrieves the overall playtime for a player.
         /// Returns false if playtime data has not been loaded from the database yet,
@@ -570,6 +571,7 @@ namespace Content.Server.Voting.Managers
                 return false;
             }
         }
+        // Sunrise added end
 
         public IEnumerable<IVoteHandle> ActiveVotes => _voteHandles.Values;
 
