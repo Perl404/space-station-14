@@ -1,3 +1,4 @@
+using Robust.Shared.ViewVariables;
 
 namespace Content.Server._Sunrise.Objectives.DrinkLiquidCondition;
 
@@ -16,6 +17,6 @@ public sealed partial class DrinkLiquidConditionComponent : Component
     /// <summary>
     /// Current amount of liquid units drunk
     /// </summary>
-    [DataField]
+    [AutoNetworkedField]
     public float Drunk;
 }

@@ -1,4 +1,3 @@
-
 namespace Content.Server._Sunrise.Objectives.WalkDistanceCondition;
 
 /// <summary>
@@ -14,8 +13,9 @@ public sealed partial class WalkDistanceConditionComponent : Component
     public int Target = 2000;
 
     /// <summary>
-    /// Current distance walked in tiles
+    /// Current distance walked in tiles.
+    /// Not networked — progress is read on demand in OnGetProgress.
     /// </summary>
-    [DataField]
+    [ViewVariables]
     public float Walked;
 }

@@ -31,13 +31,13 @@ public sealed class ChewPaperConditionSystem : EntitySystem
         args.Progress = target <= 0 ? 0f : MathF.Min(1f, (float) ent.Comp.Chewed / target);
     }
 
-    private void OnIngesting(Entity<MindContainerComponent> ent, ref IngestingEvent args)
+    private void OnIngesting(EntityUid uid, MindContainerComponent comp, ref IngestingEvent args)
     {
         // Only paper items count for this objective.
         if (!HasComp<PaperComponent>(args.Food))
             return;
 
-        if (!_mind.TryGetMind(ent.Owner, out _, out var mindComp, ent.Comp))
+        if (!_mind.TryGetMind(uid, out _, out var mindComp, comp))
             return;
 
         // Iterate only this mind's objectives (usually ≤ a handful) instead of querying all chew-paper objectives globally.

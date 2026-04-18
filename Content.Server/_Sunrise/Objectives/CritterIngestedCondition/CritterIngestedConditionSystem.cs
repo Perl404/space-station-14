@@ -29,9 +29,9 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
         SubscribeLocalEvent<MindContainerComponent, IngestingEvent>(OnIngesting);
     }
 
-    private void OnIngesting(Entity<MindContainerComponent> ent, ref IngestingEvent args)
+    private void OnIngesting(EntityUid uid, MindContainerComponent comp, ref IngestingEvent args)
     {
-        if (!_mind.TryGetMind(ent.Owner, out _, out var mindComp, ent.Comp))
+        if (!_mind.TryGetMind(uid, out _, out var mindComp, comp))
             return;
 
         if (TryComp<EdibleComponent>(args.Food, out var edible))

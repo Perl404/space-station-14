@@ -1,3 +1,5 @@
+using Robust.Shared.ViewVariables;
+
 namespace Content.Server._Sunrise.Objectives.BiteCondition;
 
 /// <summary>
@@ -15,6 +17,6 @@ public sealed partial class BiteConditionComponent : Component
     /// <summary>
     /// Current number of bites performed
     /// </summary>
-    [DataField]
+    [AutoNetworkedField]
     public int Bites;
 }

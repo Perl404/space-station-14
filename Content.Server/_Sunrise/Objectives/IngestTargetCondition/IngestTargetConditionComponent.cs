@@ -2,6 +2,7 @@ using Content.Server.Objectives.Components;
 using Content.Shared.Objectives.Components;
 using Content.Shared.Tag;
 using Robust.Shared.Prototypes;
+using Robust.Shared.ViewVariables;
 
 namespace Content.Server._Sunrise.Objectives.IngestTargetCondition;
 
@@ -22,7 +23,7 @@ public sealed partial class IngestTargetConditionComponent : Component
     /// <summary>
     /// Current number of qualifying items ingested.
     /// </summary>
-    [DataField]
+    [AutoNetworkedField]
     public int Ingested;
 
     /// <summary>

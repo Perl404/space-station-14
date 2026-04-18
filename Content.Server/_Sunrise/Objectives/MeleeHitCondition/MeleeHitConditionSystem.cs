@@ -1,5 +1,6 @@
 using Content.Server.Objectives.Components;
 using Content.Shared.Mind;
+using Content.Shared.Objectives.Components;
 using Content.Shared.Tag;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;

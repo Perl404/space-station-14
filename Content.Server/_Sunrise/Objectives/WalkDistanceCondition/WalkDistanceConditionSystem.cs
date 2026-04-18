@@ -39,14 +39,14 @@ public sealed class WalkDistanceConditionSystem : EntitySystem
         args.Progress = target <= 0 ? 0f : MathF.Min(1f, ent.Comp.Walked / (float) target);
     }
 
-    private void OnMindAdded(Entity<MindContainerComponent> ent, MindAddedMessage args)
+    private void OnMindAdded(EntityUid uid, MindContainerComponent comp, MindAddedMessage args)
     {
-        RefreshTracker(ent, args.Mind.Comp);
+        RefreshTracker(uid, args.Mind.Comp);
     }
 
-    private void OnMindRemoved(Entity<MindContainerComponent> ent, MindRemovedMessage args)
+    private void OnMindRemoved(EntityUid uid, MindContainerComponent comp, MindRemovedMessage args)
     {
-        RemComp<WalkDistanceTrackerComponent>(ent);
+        RemComp<WalkDistanceTrackerComponent>(uid);
     }
 
     /// <summary>

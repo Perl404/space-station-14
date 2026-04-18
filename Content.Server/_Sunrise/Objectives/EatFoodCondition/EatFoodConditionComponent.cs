@@ -1,3 +1,4 @@
+using Robust.Shared.ViewVariables;
 
 namespace Content.Server._Sunrise.Objectives.EatFoodCondition;
 
@@ -16,6 +17,6 @@ public sealed partial class EatFoodConditionComponent : Component
     /// <summary>
     /// Current number of food items eaten
     /// </summary>
-    [DataField]
+    [AutoNetworkedField]
     public int Eaten;
 }

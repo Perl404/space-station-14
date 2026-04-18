@@ -1,5 +1,6 @@
 using Content.Shared.Tag;
 using Robust.Shared.Prototypes;
+using Robust.Shared.ViewVariables;
 
 namespace Content.Server._Sunrise.Objectives.MeleeHitCondition;
 
@@ -19,7 +20,7 @@ public sealed partial class MeleeHitConditionComponent : Component
     /// <summary>
     /// Current number of qualifying melee hits performed.
     /// </summary>
-    [DataField]
+    [AutoNetworkedField]
     public int Hits;
 
     /// <summary>

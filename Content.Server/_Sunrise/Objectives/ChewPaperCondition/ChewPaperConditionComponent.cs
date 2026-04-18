@@ -1,3 +1,5 @@
+using Robust.Shared.ViewVariables;
+
 namespace Content.Server._Sunrise.Objectives.ChewPaperCondition;
 
 /// <summary>
@@ -15,6 +17,6 @@ public sealed partial class ChewPaperConditionComponent : Component
     /// <summary>
     /// Current number of paper sheets chewed
     /// </summary>
-    [DataField]
+    [AutoNetworkedField]
     public int Chewed;
 }
