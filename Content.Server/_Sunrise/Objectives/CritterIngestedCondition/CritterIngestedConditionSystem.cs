@@ -6,7 +6,6 @@ using Content.Shared.Mind.Components;
 using Content.Shared.Nutrition;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Nutrition.EntitySystems;
-using Content.Shared.Objectives.Components;
 using Content.Shared.Tag;
 
 namespace Content.Server._Sunrise.Objectives.CritterIngestedCondition;
@@ -46,10 +45,9 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
 
     private void OnEatFood(EntityUid food, MindComponent mindComp)
     {
-        var query = EntityQueryEnumerator<EatFoodConditionComponent, ObjectiveComponent>();
-        while (query.MoveNext(out var objectiveUid, out var eatComp, out _))
+        foreach (var objectiveUid in mindComp.Objectives)
         {
-            if (!mindComp.Objectives.Contains(objectiveUid))
+            if (!TryComp<EatFoodConditionComponent>(objectiveUid, out var eatComp))
                 continue;
 
             eatComp.Eaten++;
@@ -63,10 +61,9 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
         if (volume <= 0f)
             return;
 
-        var query = EntityQueryEnumerator<DrinkLiquidConditionComponent, ObjectiveComponent>();
-        while (query.MoveNext(out var objectiveUid, out var drinkComp, out _))
+        foreach (var objectiveUid in mindComp.Objectives)
         {
-            if (!mindComp.Objectives.Contains(objectiveUid))
+            if (!TryComp<DrinkLiquidConditionComponent>(objectiveUid, out var drinkComp))
                 continue;
 
             _drinkLiquid.AddDrunk((objectiveUid, drinkComp), volume);
@@ -75,19 +72,18 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
 
     private void OnIngestTarget(EntityUid food, MindComponent mindComp)
     {
-        var query = EntityQueryEnumerator<IngestTargetConditionComponent, ObjectiveComponent>();
-        while (query.MoveNext(out var objectiveUid, out var ingestComp, out _))
+        foreach (var objectiveUid in mindComp.Objectives)
         {
-            if (!mindComp.Objectives.Contains(objectiveUid))
+            if (!TryComp<IngestTargetConditionComponent>(objectiveUid, out var ingestComp))
                 continue;
 
             var whitelist = ingestComp.WhitelistTags;
             var blacklist = ingestComp.BlacklistTags;
 
-            if (whitelist.Count > 0 && !_tag.HasAnyTag(food, whitelist.ToArray()))
+            if (whitelist.Count > 0 && !_tag.HasAnyTag(food, whitelist))
                 continue;
 
-            if (blacklist.Count > 0 && _tag.HasAnyTag(food, blacklist.ToArray()))
+            if (blacklist.Count > 0 && _tag.HasAnyTag(food, blacklist))
                 continue;
 
             ingestComp.Ingested++;

@@ -9,8 +9,14 @@ objective-condition-eat-food-description = You're starving! Find and eat { $coun
    *[other] pieces
 } of food.
 
-objective-condition-drink-liquid-title = Drink { $count } units of liquid.
-objective-condition-drink-liquid-description = You're parched! Find and drink { $count } units of any liquid.
+objective-condition-drink-liquid-title = Drink { $count } { $count ->
+    [one] unit
+   *[other] units
+} of liquid.
+objective-condition-drink-liquid-description = You're parched! Find and drink { $count } { $count ->
+    [one] unit
+   *[other] units
+} of any liquid.
 
 objective-condition-melee-hit-title = Hit something { $count } { $count ->
     [one] time

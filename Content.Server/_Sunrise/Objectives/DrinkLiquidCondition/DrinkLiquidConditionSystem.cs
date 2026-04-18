@@ -15,10 +15,10 @@ public sealed class DrinkLiquidConditionSystem : EntitySystem
         SubscribeLocalEvent<DrinkLiquidConditionComponent, ObjectiveGetProgressEvent>(OnGetProgress);
     }
 
-    private void OnGetProgress(EntityUid uid, DrinkLiquidConditionComponent comp, ref ObjectiveGetProgressEvent args)
+    private void OnGetProgress(Entity<DrinkLiquidConditionComponent> ent, ref ObjectiveGetProgressEvent args)
     {
-        var target = CompOrNull<NumberObjectiveComponent>(uid)?.Target ?? (int) comp.Target;
-        args.Progress = target <= 0 ? 0f : MathF.Min(1f, comp.Drunk / target);
+        var target = CompOrNull<NumberObjectiveComponent>(ent)?.Target ?? (int) ent.Comp.Target;
+        args.Progress = target <= 0 ? 0f : MathF.Min(1f, ent.Comp.Drunk / target);
     }
 
     public void AddDrunk(Entity<DrinkLiquidConditionComponent> ent, float amount)

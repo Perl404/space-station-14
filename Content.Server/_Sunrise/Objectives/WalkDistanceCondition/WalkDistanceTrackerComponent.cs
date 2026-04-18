@@ -1,3 +1,5 @@
+using Robust.Shared.ViewVariables;
+
 namespace Content.Server._Sunrise.Objectives.WalkDistanceCondition;
 
 /// <summary>
@@ -12,6 +14,6 @@ public sealed partial class WalkDistanceTrackerComponent : Component
     /// Objective entities (with <see cref="WalkDistanceConditionComponent"/>) whose
     /// Walked counter should be incremented when this entity moves.
     /// </summary>
-    [DataField]
+    [ViewVariables]
     public List<EntityUid> Objectives = new();
 }

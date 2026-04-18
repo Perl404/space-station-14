@@ -16,9 +16,9 @@ public sealed class IngestTargetConditionSystem : EntitySystem
         SubscribeLocalEvent<IngestTargetConditionComponent, ObjectiveGetProgressEvent>(OnGetProgress);
     }
 
-    private void OnGetProgress(EntityUid uid, IngestTargetConditionComponent comp, ref ObjectiveGetProgressEvent args)
+    private void OnGetProgress(Entity<IngestTargetConditionComponent> ent, ref ObjectiveGetProgressEvent args)
     {
-        var target = CompOrNull<NumberObjectiveComponent>(uid)?.Target ?? comp.Target;
-        args.Progress = target <= 0 ? 0f : MathF.Min(1f, (float) comp.Ingested / target);
+        var target = CompOrNull<NumberObjectiveComponent>(ent)?.Target ?? ent.Comp.Target;
+        args.Progress = target <= 0 ? 0f : MathF.Min(1f, (float) ent.Comp.Ingested / target);
     }
 }

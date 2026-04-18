@@ -35,4 +35,12 @@ public sealed partial class CritterObjectivesComponent : Component
     /// </summary>
     [DataField(required: true)]
     public EntProtoId GameRule = string.Empty;
+
+    /// <summary>
+    /// Whether objectives have already been assigned to this entity.
+    /// Prevents duplicate assignment if <see cref="MindAddedMessage"/> fires again
+    /// (e.g. ghost role re-takeover after slot freeing).
+    /// </summary>
+    [DataField]
+    public bool Assigned;
 }

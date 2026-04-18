@@ -15,9 +15,9 @@ public sealed class EatFoodConditionSystem : EntitySystem
         SubscribeLocalEvent<EatFoodConditionComponent, ObjectiveGetProgressEvent>(OnGetProgress);
     }
 
-    private void OnGetProgress(EntityUid uid, EatFoodConditionComponent comp, ref ObjectiveGetProgressEvent args)
+    private void OnGetProgress(Entity<EatFoodConditionComponent> ent, ref ObjectiveGetProgressEvent args)
     {
-        var target = CompOrNull<NumberObjectiveComponent>(uid)?.Target ?? comp.Target;
-        args.Progress = target <= 0 ? 0f : MathF.Min(1f, (float) comp.Eaten / target);
+        var target = CompOrNull<NumberObjectiveComponent>(ent)?.Target ?? ent.Comp.Target;
+        args.Progress = target <= 0 ? 0f : MathF.Min(1f, (float) ent.Comp.Eaten / target);
     }
 }

@@ -33,20 +33,20 @@ public sealed class WalkDistanceConditionSystem : EntitySystem
         SubscribeLocalEvent<WalkDistanceTrackerComponent, MoveEvent>(OnTrackerMove);
     }
 
-    private void OnGetProgress(EntityUid uid, WalkDistanceConditionComponent comp, ref ObjectiveGetProgressEvent args)
+    private void OnGetProgress(Entity<WalkDistanceConditionComponent> ent, ref ObjectiveGetProgressEvent args)
     {
-        var target = CompOrNull<NumberObjectiveComponent>(uid)?.Target ?? comp.Target;
-        args.Progress = target <= 0 ? 0f : MathF.Min(1f, comp.Walked / (float) target);
+        var target = CompOrNull<NumberObjectiveComponent>(ent)?.Target ?? ent.Comp.Target;
+        args.Progress = target <= 0 ? 0f : MathF.Min(1f, ent.Comp.Walked / (float) target);
     }
 
-    private void OnMindAdded(EntityUid uid, MindContainerComponent mindContainer, MindAddedMessage args)
+    private void OnMindAdded(Entity<MindContainerComponent> ent, MindAddedMessage args)
     {
-        RefreshTracker(uid, args.Mind.Comp);
+        RefreshTracker(ent, args.Mind.Comp);
     }
 
-    private void OnMindRemoved(EntityUid uid, MindContainerComponent mindContainer, MindRemovedMessage args)
+    private void OnMindRemoved(Entity<MindContainerComponent> ent, MindRemovedMessage args)
     {
-        RemComp<WalkDistanceTrackerComponent>(uid);
+        RemComp<WalkDistanceTrackerComponent>(ent);
     }
 
     /// <summary>
@@ -72,10 +72,17 @@ public sealed class WalkDistanceConditionSystem : EntitySystem
         tracker.Objectives = objectives;
     }
 
-    private void OnTrackerMove(EntityUid uid, WalkDistanceTrackerComponent tracker, ref MoveEvent args)
+    private void OnTrackerMove(Entity<WalkDistanceTrackerComponent> ent, ref MoveEvent args)
     {
         // Parent changes (teleports, entering containers, grid transitions) shouldn't count as walking.
         if (args.ParentChanged)
+            return;
+
+        // Cheap early-exit on local displacement before touching the transform system.
+        // If both positions share a parent this is already the real delta; otherwise it's
+        // still a conservative upper bound — a tiny local delta means tiny world delta too.
+        var localDeltaSq = (args.NewPosition.Position - args.OldPosition.Position).LengthSquared();
+        if (localDeltaSq < MinMoveDelta * MinMoveDelta)
             return;
 
         // Compute actual world-space displacement in tiles.
@@ -89,6 +96,7 @@ public sealed class WalkDistanceConditionSystem : EntitySystem
         if (delta < MinMoveDelta)
             return;
 
+        var tracker = ent.Comp;
         for (var i = tracker.Objectives.Count - 1; i >= 0; i--)
         {
             var objectiveUid = tracker.Objectives[i];
@@ -99,8 +107,8 @@ public sealed class WalkDistanceConditionSystem : EntitySystem
                 continue;
             }
 
+            // Progress is read on demand in OnGetProgress; no Dirty needed — component isn't networked.
             walkComp.Walked += delta;
-            Dirty(objectiveUid, walkComp);
         }
     }
 }

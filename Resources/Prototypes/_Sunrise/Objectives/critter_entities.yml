@@ -1,3 +1,0 @@
-# Sunrise critter objective component — defined here so it's close to the objective prototypes.
-# Attached to MobMouse and MobMothroach in vanilla animals.yml via Sunrise-edit markers.
-# Child protos (MobMouse1, MobMouse2, MobMouseCancer) inherit the component automatically.

@@ -32,32 +32,38 @@ public sealed class CritterObjectivesSystem : EntitySystem
         SubscribeLocalEvent<GhostRoleComponent, MindAddedMessage>(OnMindAdded);
     }
 
-    private void OnMindAdded(EntityUid uid, GhostRoleComponent component, MindAddedMessage args)
+    private void OnMindAdded(Entity<GhostRoleComponent> ent, ref MindAddedMessage args)
     {
-        if (!TryComp<CritterObjectivesComponent>(uid, out var critterObj))
+        if (!TryComp<CritterObjectivesComponent>(ent, out var critterObj))
+            return;
+
+        if (critterObj.Assigned)
             return;
 
         if (!TryComp<MindComponent>(args.Mind, out var mindComp))
             return;
 
+        critterObj.Assigned = true;
+        Dirty(ent, critterObj);
+
         var pool = critterObj.ObjectivesPool;
         var count = Math.Min(critterObj.ObjectiveCount, pool.Count);
 
-        if (pool.Count > 0)
-        {
-            var shuffled = new List<EntProtoId>(pool);
-            _random.Shuffle(shuffled);
+        if (count <= 0)
+            return;
 
-            for (var i = 0; i < count; i++)
-                _mind.TryAddObjective(args.Mind, mindComp, shuffled[i]);
-        }
+        var shuffled = new List<EntProtoId>(pool);
+        _random.Shuffle(shuffled);
+
+        for (var i = 0; i < count; i++)
+            _mind.TryAddObjective(args.Mind, mindComp, shuffled[i]);
 
         // Objectives are assigned — refresh the movement tracker so MoveEvent only
         // fires for critters that actually have a walk-distance objective.
-        _walkDistance.RefreshTracker(uid, mindComp);
+        _walkDistance.RefreshTracker(ent.Owner, mindComp);
 
         // Register this critter with the game rule so objectives appear in the round-end summary.
-        var characterName = mindComp.CharacterName ?? MetaData(uid).EntityName;
+        var characterName = mindComp.CharacterName ?? MetaData(ent.Owner).EntityName;
         _critterRule.AddCritterMind(args.Mind, characterName, critterObj.GameRule);
 
         if (mindComp.UserId is { } userId && _players.TryGetSessionById(userId, out var session))

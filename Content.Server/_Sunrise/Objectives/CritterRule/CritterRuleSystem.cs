@@ -20,9 +20,9 @@ public sealed class CritterRuleSystem : GameRuleSystem<CritterRuleComponent>
         SubscribeLocalEvent<CritterRuleComponent, ObjectivesTextGetInfoEvent>(OnObjectivesTextGetInfo);
     }
 
-    private void OnObjectivesTextGetInfo(EntityUid uid, CritterRuleComponent comp, ref ObjectivesTextGetInfoEvent args)
+    private void OnObjectivesTextGetInfo(Entity<CritterRuleComponent> ent, ref ObjectivesTextGetInfoEvent args)
     {
-        args.Minds = comp.Minds;
+        args.Minds = ent.Comp.Minds;
         args.AgentName = Loc.GetString("critter-round-end-agent-name");
     }
 
