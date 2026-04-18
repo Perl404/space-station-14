@@ -56,11 +56,11 @@
       state: icon
   - type: SurviveCondition
 
-# Bite things objective
+# Melee hit objective
 - type: entity
   parent: BaseCritterObjective
-  id: BiteObjective
-  name: Bite things objective
+  id: MeleeHitObjective
+  name: Melee hit objective
   components:
   - type: Objective
     icon:
@@ -69,9 +69,9 @@
   - type: NumberObjective
     min: 15
     max: 40
-    title: objective-condition-bite-title
-    description: objective-condition-bite-description
-  - type: BiteCondition
+    title: objective-condition-melee-hit-title
+    description: objective-condition-melee-hit-description
+  - type: MeleeHitCondition
 
 # Walk distance objective
 - type: entity
@@ -90,11 +90,11 @@
     description: objective-condition-walk-distance-description
   - type: WalkDistanceCondition
 
-# Chew paper objective
+# Ingest paper objective
 - type: entity
   parent: BaseCritterObjective
-  id: ChewPaperObjective
-  name: Chew paper objective
+  id: IngestPaperObjective
+  name: Ingest paper objective
   components:
   - type: Objective
     icon:
@@ -103,6 +103,9 @@
   - type: NumberObjective
     min: 5
     max: 15
-    title: objective-condition-chew-paper-title
-    description: objective-condition-chew-paper-description
-  - type: ChewPaperCondition
+    title: objective-condition-ingest-paper-title
+    description: objective-condition-ingest-paper-description
+  - type: IngestTargetCondition
+    whitelistTags:
+    - Paper
+    - Document

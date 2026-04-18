@@ -1,6 +1,5 @@
-using Content.Server._Sunrise.Objectives.Systems;
 
-namespace Content.Server._Sunrise.Objectives.Components;
+namespace Content.Server._Sunrise.Objectives.DrinkLiquidCondition;
 
 /// <summary>
 /// Requires that the player drinks a specific amount of liquid units.

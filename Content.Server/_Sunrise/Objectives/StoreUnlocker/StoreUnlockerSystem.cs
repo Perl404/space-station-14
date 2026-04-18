@@ -1,7 +1,6 @@
-using Content.Server.Objectives.Components;
 using Content.Shared.Mind;
 
-namespace Content.Server.Objectives.Systems;
+namespace Content.Server._Sunrise.Objectives.StoreUnlocker;
 
 /// <summary>
 /// Provides api for listings with <c>ObjectiveUnlockRequirement</c> to use.

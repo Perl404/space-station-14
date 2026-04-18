@@ -1,8 +1,7 @@
-using Content.Server._Sunrise.Objectives.Components;
 using Content.Server.Objectives.Components;
 using Content.Shared.Objectives.Components;
 
-namespace Content.Server._Sunrise.Objectives.Systems;
+namespace Content.Server._Sunrise.Objectives.EatFoodCondition;
 
 /// <summary>
 /// Handles progress for the eat food objective condition.

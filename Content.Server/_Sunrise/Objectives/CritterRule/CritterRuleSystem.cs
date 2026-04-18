@@ -1,11 +1,11 @@
-using Content.Server._Sunrise.Objectives.Components;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules;
 using Content.Server.Objectives;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Mind.Components;
+using Robust.Shared.Prototypes;
 
-namespace Content.Server._Sunrise.Objectives.Systems;
+namespace Content.Server._Sunrise.Objectives.CritterRule;
 
 /// <summary>
 /// Manages the critter game rule so that critter objectives appear
@@ -30,7 +30,7 @@ public sealed class CritterRuleSystem : GameRuleSystem<CritterRuleComponent>
     /// Ensures a <see cref="CritterRuleComponent"/> game rule exists and adds the mind to it.
     /// Called by <see cref="CritterObjectivesSystem"/> when a critter gets objectives.
     /// </summary>
-    public EntityUid? AddCritterMind(EntityUid mindId, string name)
+    public EntityUid? AddCritterMind(EntityUid mindId, string name, EntProtoId gameRuleId)
     {
         // Find an existing critter rule, or create one if none exists.
         var rule = EntityQueryEnumerator<CritterRuleComponent, GameRuleComponent>();
@@ -44,7 +44,7 @@ public sealed class CritterRuleSystem : GameRuleSystem<CritterRuleComponent>
         }
 
         // No active rule — create one.
-        var newRuleUid = GameTicker.AddGameRule("CritterRule");
+        var newRuleUid = GameTicker.AddGameRule(gameRuleId.Id);
         if (!TryComp<CritterRuleComponent>(newRuleUid, out var newComp))
         {
             Log.Error("CritterRule prototype is missing CritterRuleComponent, deleting it.");

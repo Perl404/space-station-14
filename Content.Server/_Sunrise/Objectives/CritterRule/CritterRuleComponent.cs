@@ -1,6 +1,5 @@
-using Content.Server._Sunrise.Objectives.Systems;
 
-namespace Content.Server._Sunrise.Objectives.Components;
+namespace Content.Server._Sunrise.Objectives.CritterRule;
 
 /// <summary>
 /// Gamerule for critter ghost roles that have objectives.

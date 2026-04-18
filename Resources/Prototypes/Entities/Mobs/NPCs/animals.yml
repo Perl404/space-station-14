@@ -672,6 +672,17 @@
           32:
             sprite: Mobs/Animals/mothroach/displacement.rsi
             state: neck
+  # Sunrise-Start - critter objectives component
+  - type: CritterObjectives
+    objectivesPool:
+    - DrinkLiquidObjective
+    - MeleeHitObjective
+    - WalkDistanceObjective
+    - IngestPaperObjective
+    objectiveCount: 4
+    greeting: critter-objectives-greeting-mothroach
+    gameRule: CritterRule
+  # Sunrise-End
 
 
 # Note that the mallard duck is actually a male drake mallard, with the brown duck being the female variant of the same species, however ss14 lacks sex specific textures
@@ -2010,6 +2021,15 @@
   - type: HolidayRsiSwap
     sprite:
       festive: _Sunrise/Mobs/Animals/mouse_santa.rsi
+  - type: CritterObjectives
+    objectivesPool:
+    - EatFoodObjective
+    - DrinkLiquidObjective
+    - MeleeHitObjective
+    - WalkDistanceObjective
+    objectiveCount: 4
+    greeting: critter-objectives-greeting-mouse
+    gameRule: CritterRule
   # Sunrise-End
 
 - type: entity

@@ -1,6 +1,5 @@
-using Content.Server._Sunrise.Objectives.Systems;
 
-namespace Content.Server._Sunrise.Objectives.Components;
+namespace Content.Server._Sunrise.Objectives.EatFoodCondition;
 
 /// <summary>
 /// Requires that the player eats a specific amount of food items.

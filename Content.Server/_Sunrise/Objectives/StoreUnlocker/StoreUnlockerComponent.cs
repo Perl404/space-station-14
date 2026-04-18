@@ -1,7 +1,7 @@
 using Content.Shared.Store;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server.Objectives.Components;
+namespace Content.Server._Sunrise.Objectives.StoreUnlocker;
 
 /// <summary>
 /// Unlocks store listings that use <see cref="ObjectiveUnlockCondition"/>.

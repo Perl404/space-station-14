@@ -1,8 +1,7 @@
-using Content.Server._Sunrise.Objectives.Components;
 using Content.Server.Objectives.Components;
 using Content.Shared.Objectives.Components;
 
-namespace Content.Server._Sunrise.Objectives.Systems;
+namespace Content.Server._Sunrise.Objectives.DrinkLiquidCondition;
 
 /// <summary>
 /// Handles progress for the drink liquid objective condition.
