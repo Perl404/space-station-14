@@ -1,3 +1,5 @@
+using Content.Server._Sunrise.Objectives.MeleeHitCondition;
+
 namespace Content.Server._Sunrise.Objectives.BiteCondition;
 
 /// <summary>

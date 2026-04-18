@@ -1,3 +1,4 @@
+using Content.Server._Sunrise.Objectives.CritterIngestedCondition;
 using Content.Server.Objectives.Components;
 using Content.Shared.Objectives.Components;
 using Content.Shared.Tag;

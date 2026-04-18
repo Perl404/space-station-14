@@ -1,3 +1,5 @@
+using Content.Server._Sunrise.Objectives.CritterIngestedCondition;
+
 namespace Content.Server._Sunrise.Objectives.ChewPaperCondition;
 
 /// <summary>
