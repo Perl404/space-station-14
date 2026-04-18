@@ -1,3 +1,4 @@
+using Content.Server._Sunrise.Objectives.ChewPaperCondition;
 using Content.Server._Sunrise.Objectives.DrinkLiquidCondition;
 using Content.Server._Sunrise.Objectives.EatFoodCondition;
 using Content.Server._Sunrise.Objectives.IngestTargetCondition;
@@ -6,6 +7,7 @@ using Content.Shared.Mind.Components;
 using Content.Shared.Nutrition;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Nutrition.EntitySystems;
+using Content.Shared.Paper;
 using Content.Shared.Tag;
 
 namespace Content.Server._Sunrise.Objectives.CritterIngestedCondition;
@@ -13,6 +15,8 @@ namespace Content.Server._Sunrise.Objectives.CritterIngestedCondition;
 /// <summary>
 /// Sunrise added - handles critter ingestion objective progress from a single directed ingestion hook.
 /// Routes ingested items to the appropriate condition based on type and tag filters.
+/// This is the sole subscriber to <see cref="IngestingEvent"/> via <see cref="MindContainerComponent"/>
+/// to avoid duplicate-subscription errors in the EventBus.
 /// </summary>
 public sealed class CritterIngestedConditionSystem : EntitySystem
 {
@@ -26,6 +30,9 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
 
         // IngestingEvent is raised on the eater, so subscribe via MindContainerComponent
         // to only dispatch for entities that can have a mind (not every MetaData entity).
+        // IMPORTANT: Only one system may subscribe to (MindContainerComponent, IngestingEvent).
+        // All ingestion routing is handled here — other condition systems must NOT subscribe
+        // to the same pair or the EventBus will throw DuplicateSubscription.
         SubscribeLocalEvent<MindContainerComponent, IngestingEvent>(OnIngesting);
     }
 
@@ -42,6 +49,7 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
                 OnDrinkLiquid(args, mindComp);
         }
 
+        OnChewPaper(args.Food, mindComp);
         OnIngestTarget(args.Food, mindComp);
     }
 
@@ -90,6 +98,21 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
 
             ingestComp.Ingested++;
             Dirty(objectiveUid, ingestComp);
+        }
+    }
+
+    private void OnChewPaper(EntityUid food, MindComponent mindComp)
+    {
+        if (!HasComp<PaperComponent>(food))
+            return;
+
+        foreach (var objectiveUid in mindComp.Objectives)
+        {
+            if (!TryComp<ChewPaperConditionComponent>(objectiveUid, out var chewComp))
+                continue;
+
+            chewComp.Chewed++;
+            Dirty(objectiveUid, chewComp);
         }
     }
 }

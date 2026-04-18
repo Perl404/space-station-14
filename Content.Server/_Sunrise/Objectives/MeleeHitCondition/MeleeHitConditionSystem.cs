@@ -1,3 +1,4 @@
+using Content.Server._Sunrise.Objectives.BiteCondition;
 using Content.Server.Objectives.Components;
 using Content.Shared.Mind;
 using Content.Shared.Objectives.Components;
@@ -8,8 +9,10 @@ using Content.Shared.Weapons.Melee.Events;
 namespace Content.Server._Sunrise.Objectives.MeleeHitCondition;
 
 /// <summary>
-/// Handles progress for the melee hit objective condition.
-/// Counts hits on entities that match the optional whitelist/blacklist tag filters.
+/// Handles progress for the melee hit and bite objective conditions.
+/// This is the sole subscriber to <see cref="MeleeHitEvent"/> via <see cref="MeleeWeaponComponent"/>
+/// to avoid duplicate-subscription errors in the EventBus.
+/// Routes hits to the appropriate condition based on context (bite vs weapon) and tag filters.
 /// </summary>
 public sealed class MeleeHitConditionSystem : EntitySystem
 {
@@ -21,6 +24,10 @@ public sealed class MeleeHitConditionSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<MeleeHitConditionComponent, ObjectiveGetProgressEvent>(OnGetProgress);
+
+        // IMPORTANT: Only one system may subscribe to (MeleeWeaponComponent, MeleeHitEvent).
+        // All melee-hit routing is handled here — other condition systems must NOT subscribe
+        // to the same pair or the EventBus will throw DuplicateSubscription.
         SubscribeLocalEvent<MeleeWeaponComponent, MeleeHitEvent>(OnMeleeHit);
     }
 
@@ -40,6 +47,28 @@ public sealed class MeleeHitConditionSystem : EntitySystem
         if (!_mind.TryGetMind(args.User, out _, out var mindComp))
             return;
 
+        // Route bite conditions — only count unarmed attacks (body part = weapon entity is the user).
+        if (ent.Owner == args.User)
+            OnBite(args, mindComp);
+
+        // Route melee-hit conditions with tag filtering.
+        OnMeleeHitCondition(ent, ref args, mindComp);
+    }
+
+    private void OnBite(MeleeHitEvent args, MindComponent mindComp)
+    {
+        foreach (var objectiveUid in mindComp.Objectives)
+        {
+            if (!TryComp<BiteConditionComponent>(objectiveUid, out var biteComp))
+                continue;
+
+            biteComp.Bites++;
+            Dirty(objectiveUid, biteComp);
+        }
+    }
+
+    private void OnMeleeHitCondition(Entity<MeleeWeaponComponent> ent, ref MeleeHitEvent args, MindComponent mindComp)
+    {
         foreach (var objectiveUid in mindComp.Objectives)
         {
             if (!TryComp<MeleeHitConditionComponent>(objectiveUid, out var hitComp))
