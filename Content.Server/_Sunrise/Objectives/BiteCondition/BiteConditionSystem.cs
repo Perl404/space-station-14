@@ -1,11 +1,10 @@
-using Content.Server._Sunrise.Objectives.Components;
 using Content.Server.Objectives.Components;
 using Content.Shared.Mind;
 using Content.Shared.Objectives.Components;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
 
-namespace Content.Server._Sunrise.Objectives.Systems;
+namespace Content.Server._Sunrise.Objectives.BiteCondition;
 
 /// <summary>
 /// Handles progress for the bite objective condition.
@@ -36,16 +35,18 @@ public sealed class BiteConditionSystem : EntitySystem
         if (!args.IsHit || args.HitEntities.Count == 0)
             return;
 
+        // Only count unarmed attacks (bites/claws) — if the weapon is a separate item, it's not a bite.
+        if (ent.Owner != args.User)
+            return;
+
         // MeleeHitEvent is raised on the weapon entity, so use args.User for the attacker.
         if (!_mind.TryGetMind(args.User, out _, out var mindComp))
             return;
 
-        // Find all BiteCondition objectives for this mind
-        var query = EntityQueryEnumerator<BiteConditionComponent, ObjectiveComponent>();
-        while (query.MoveNext(out var objectiveUid, out var biteComp, out _))
+        // Iterate only this mind's objectives (usually ≤ a handful) instead of querying all bite objectives globally.
+        foreach (var objectiveUid in mindComp.Objectives)
         {
-            // Check if this objective belongs to the attacking entity's mind
-            if (!mindComp.Objectives.Contains(objectiveUid))
+            if (!TryComp<BiteConditionComponent>(objectiveUid, out var biteComp))
                 continue;
 
             biteComp.Bites++;

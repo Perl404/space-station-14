@@ -1,6 +1,4 @@
-using Content.Server._Sunrise.Objectives.Systems;
-
-namespace Content.Server._Sunrise.Objectives.Components;
+namespace Content.Server._Sunrise.Objectives.ChewPaperCondition;
 
 /// <summary>
 /// Requires that the player chews a specific number of paper sheets.

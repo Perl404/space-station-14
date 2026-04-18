@@ -5,7 +5,7 @@ namespace Content.Server._Sunrise.Objectives.IngestTargetCondition;
 
 /// <summary>
 /// Handles progress for the ingest target objective condition.
-/// Actual counting is done by <see cref="CritterIngestedCondition.CritterIngestedConditionSystem"/>.
+/// Actual counting is done by <see cref="Content.Server._Sunrise.Objectives.CritterIngestedCondition.CritterIngestedConditionSystem"/>.
 /// </summary>
 public sealed class IngestTargetConditionSystem : EntitySystem
 {

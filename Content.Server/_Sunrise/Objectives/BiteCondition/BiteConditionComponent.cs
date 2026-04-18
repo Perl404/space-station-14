@@ -1,6 +1,4 @@
-using Content.Server._Sunrise.Objectives.Systems;
-
-namespace Content.Server._Sunrise.Objectives.Components;
+namespace Content.Server._Sunrise.Objectives.BiteCondition;
 
 /// <summary>
 /// Requires that the player bites food a specific number of times.

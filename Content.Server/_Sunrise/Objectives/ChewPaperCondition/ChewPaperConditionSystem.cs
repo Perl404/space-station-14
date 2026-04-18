@@ -1,4 +1,3 @@
-using Content.Server._Sunrise.Objectives.Components;
 using Content.Server.Objectives.Components;
 using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
@@ -6,7 +5,7 @@ using Content.Shared.Nutrition;
 using Content.Shared.Objectives.Components;
 using Content.Shared.Paper;
 
-namespace Content.Server._Sunrise.Objectives.Systems;
+namespace Content.Server._Sunrise.Objectives.ChewPaperCondition;
 
 /// <summary>
 /// Handles progress for the chew paper objective condition.
@@ -41,14 +40,14 @@ public sealed class ChewPaperConditionSystem : EntitySystem
         if (!_mind.TryGetMind(ent.Owner, out _, out var mindComp, ent.Comp))
             return;
 
-        var query = EntityQueryEnumerator<ChewPaperConditionComponent, ObjectiveComponent>();
-        while (query.MoveNext(out var objUid, out var chewComp, out _))
+        // Iterate only this mind's objectives (usually ≤ a handful) instead of querying all chew-paper objectives globally.
+        foreach (var objectiveUid in mindComp.Objectives)
         {
-            if (!mindComp.Objectives.Contains(objUid))
+            if (!TryComp<ChewPaperConditionComponent>(objectiveUid, out var chewComp))
                 continue;
 
             chewComp.Chewed++;
-            Dirty(objUid, chewComp);
+            Dirty(objectiveUid, chewComp);
         }
     }
 }

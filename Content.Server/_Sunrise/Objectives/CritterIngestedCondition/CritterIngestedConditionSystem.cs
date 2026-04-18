@@ -24,12 +24,14 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<MetaDataComponent, IngestingEvent>(OnIngesting);
+        // IngestingEvent is raised on the eater, so subscribe via MindContainerComponent
+        // to only dispatch for entities that can have a mind (not every MetaData entity).
+        SubscribeLocalEvent<MindContainerComponent, IngestingEvent>(OnIngesting);
     }
 
-    private void OnIngesting(Entity<MetaDataComponent> ent, ref IngestingEvent args)
+    private void OnIngesting(Entity<MindContainerComponent> ent, ref IngestingEvent args)
     {
-        if (!_mind.TryGetMind(ent.Owner, out _, out var mindComp))
+        if (!_mind.TryGetMind(ent.Owner, out _, out var mindComp, ent.Comp))
             return;
 
         if (TryComp<EdibleComponent>(args.Food, out var edible))

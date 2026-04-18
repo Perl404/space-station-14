@@ -8,7 +8,7 @@ namespace Content.Server._Sunrise.Objectives.IngestTargetCondition;
 /// <summary>
 /// Requires that the player ingests entities matching the tag filter
 /// a specific number of times.
-/// Actual hit counting is done by <see cref="CritterIngestedCondition.CritterIngestedConditionSystem"/>.
+/// Actual hit counting is done by <see cref="Content.Server._Sunrise.Objectives.CritterIngestedCondition.CritterIngestedConditionSystem"/>.
 /// </summary>
 [RegisterComponent, Access(typeof(IngestTargetConditionSystem), typeof(CritterIngestedCondition.CritterIngestedConditionSystem))]
 public sealed partial class IngestTargetConditionComponent : Component

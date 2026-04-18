@@ -1,4 +1,5 @@
 using Robust.Shared.Prototypes;
+using Robust.Shared.ViewVariables;
 
 namespace Content.Server._Sunrise.Objectives.CritterObjectives;
 
@@ -41,6 +42,6 @@ public sealed partial class CritterObjectivesComponent : Component
     /// Prevents duplicate assignment if <see cref="MindAddedMessage"/> fires again
     /// (e.g. ghost role re-takeover after slot freeing).
     /// </summary>
-    [DataField]
+    [ViewVariables]
     public bool Assigned;
 }
