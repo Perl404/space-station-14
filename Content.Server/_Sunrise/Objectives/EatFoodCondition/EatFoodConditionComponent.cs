@@ -1,11 +1,9 @@
-using Robust.Shared.ViewVariables;
-
 namespace Content.Server._Sunrise.Objectives.EatFoodCondition;
 
 /// <summary>
 /// Requires that the player eats a specific amount of food items.
 /// </summary>
-[RegisterComponent, Access(typeof(EatFoodConditionSystem))]
+[RegisterComponent, Access(typeof(EatFoodConditionSystem), typeof(CritterIngestedConditionSystem))]
 public sealed partial class EatFoodConditionComponent : Component
 {
     /// <summary>
@@ -15,8 +13,9 @@ public sealed partial class EatFoodConditionComponent : Component
     public int Target = 5;
 
     /// <summary>
-    /// Current number of food items eaten
+    /// Current number of food items eaten.
+    /// Not networked — progress is read on demand via ObjectiveGetProgressEvent.
     /// </summary>
-    [AutoNetworkedField]
+    [ViewVariables]
     public int Eaten;
 }

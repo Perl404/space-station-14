@@ -2,7 +2,6 @@ using Content.Server.Objectives.Components;
 using Content.Shared.Objectives.Components;
 using Content.Shared.Tag;
 using Robust.Shared.Prototypes;
-using Robust.Shared.ViewVariables;
 
 namespace Content.Server._Sunrise.Objectives.IngestTargetCondition;
 
@@ -11,7 +10,7 @@ namespace Content.Server._Sunrise.Objectives.IngestTargetCondition;
 /// a specific number of times.
 /// Actual hit counting is done by <see cref="Content.Server._Sunrise.Objectives.CritterIngestedCondition.CritterIngestedConditionSystem"/>.
 /// </summary>
-[RegisterComponent, Access(typeof(IngestTargetConditionSystem), typeof(CritterIngestedCondition.CritterIngestedConditionSystem))]
+[RegisterComponent, Access(typeof(IngestTargetConditionSystem), typeof(CritterIngestedConditionSystem))]
 public sealed partial class IngestTargetConditionComponent : Component
 {
     /// <summary>
@@ -22,8 +21,9 @@ public sealed partial class IngestTargetConditionComponent : Component
 
     /// <summary>
     /// Current number of qualifying items ingested.
+    /// Not networked — progress is read on demand via ObjectiveGetProgressEvent.
     /// </summary>
-    [AutoNetworkedField]
+    [ViewVariables]
     public int Ingested;
 
     /// <summary>

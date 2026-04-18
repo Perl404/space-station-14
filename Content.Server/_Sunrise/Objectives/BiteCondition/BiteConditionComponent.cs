@@ -1,11 +1,9 @@
-using Robust.Shared.ViewVariables;
-
 namespace Content.Server._Sunrise.Objectives.BiteCondition;
 
 /// <summary>
 /// Requires that the player bites food a specific number of times.
 /// </summary>
-[RegisterComponent, Access(typeof(BiteConditionSystem))]
+[RegisterComponent, Access(typeof(BiteConditionSystem), typeof(MeleeHitConditionSystem))]
 public sealed partial class BiteConditionComponent : Component
 {
     /// <summary>
@@ -15,8 +13,9 @@ public sealed partial class BiteConditionComponent : Component
     public int Target = 20;
 
     /// <summary>
-    /// Current number of bites performed
+    /// Current number of bites performed.
+    /// Not networked — progress is read on demand via ObjectiveGetProgressEvent.
     /// </summary>
-    [AutoNetworkedField]
+    [ViewVariables]
     public int Bites;
 }

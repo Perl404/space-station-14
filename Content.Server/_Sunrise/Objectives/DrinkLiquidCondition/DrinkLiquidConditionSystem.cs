@@ -27,6 +27,5 @@ public sealed class DrinkLiquidConditionSystem : EntitySystem
             return;
 
         ent.Comp.Drunk += amount;
-        Dirty(ent);
     }
 }

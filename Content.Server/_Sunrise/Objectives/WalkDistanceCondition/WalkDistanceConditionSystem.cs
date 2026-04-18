@@ -55,21 +55,17 @@ public sealed class WalkDistanceConditionSystem : EntitySystem
     /// </summary>
     public void RefreshTracker(EntityUid body, MindComponent mind)
     {
-        var objectives = new List<EntityUid>();
+        var tracker = EnsureComp<WalkDistanceTrackerComponent>(body);
+        tracker.Objectives.Clear();
+
         foreach (var objective in mind.Objectives)
         {
             if (HasComp<WalkDistanceConditionComponent>(objective))
-                objectives.Add(objective);
+                tracker.Objectives.Add(objective);
         }
 
-        if (objectives.Count == 0)
-        {
+        if (tracker.Objectives.Count == 0)
             RemComp<WalkDistanceTrackerComponent>(body);
-            return;
-        }
-
-        var tracker = EnsureComp<WalkDistanceTrackerComponent>(body);
-        tracker.Objectives = objectives;
     }
 
     private void OnTrackerMove(Entity<WalkDistanceTrackerComponent> ent, ref MoveEvent args)
@@ -86,6 +82,9 @@ public sealed class WalkDistanceConditionSystem : EntitySystem
             return;
 
         // Compute actual world-space displacement in tiles.
+        // logError: false is intentional — after ParentChanged or grid transitions the old
+        // EntityCoordinates may reference a no-longer-valid parent, which is expected here;
+        // the MapId comparison below safely discards such cases.
         var oldMap = _transform.ToMapCoordinates(args.OldPosition, logError: false);
         var newMap = _transform.ToMapCoordinates(args.NewPosition, logError: false);
 

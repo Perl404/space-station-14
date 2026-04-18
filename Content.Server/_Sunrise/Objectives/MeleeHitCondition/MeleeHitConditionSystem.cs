@@ -63,7 +63,6 @@ public sealed class MeleeHitConditionSystem : EntitySystem
                 continue;
 
             biteComp.Bites++;
-            Dirty(objectiveUid, biteComp);
         }
     }
 
@@ -90,7 +89,6 @@ public sealed class MeleeHitConditionSystem : EntitySystem
                     continue;
 
                 hitComp.Hits++;
-                Dirty(objectiveUid, hitComp);
             }
         }
     }

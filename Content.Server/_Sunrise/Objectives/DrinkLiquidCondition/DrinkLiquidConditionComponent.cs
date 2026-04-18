@@ -1,11 +1,9 @@
-using Robust.Shared.ViewVariables;
-
 namespace Content.Server._Sunrise.Objectives.DrinkLiquidCondition;
 
 /// <summary>
 /// Requires that the player drinks a specific amount of liquid units.
 /// </summary>
-[RegisterComponent, Access(typeof(DrinkLiquidConditionSystem))]
+[RegisterComponent, Access(typeof(DrinkLiquidConditionSystem), typeof(CritterIngestedConditionSystem))]
 public sealed partial class DrinkLiquidConditionComponent : Component
 {
     /// <summary>
@@ -15,8 +13,9 @@ public sealed partial class DrinkLiquidConditionComponent : Component
     public float Target = 100f;
 
     /// <summary>
-    /// Current amount of liquid units drunk
+    /// Current amount of liquid units drunk.
+    /// Not networked — progress is read on demand via ObjectiveGetProgressEvent.
     /// </summary>
-    [AutoNetworkedField]
+    [ViewVariables]
     public float Drunk;
 }

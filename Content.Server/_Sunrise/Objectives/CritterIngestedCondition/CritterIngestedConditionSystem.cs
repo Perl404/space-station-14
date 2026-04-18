@@ -36,9 +36,9 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
         SubscribeLocalEvent<MindContainerComponent, IngestingEvent>(OnIngesting);
     }
 
-    private void OnIngesting(EntityUid uid, MindContainerComponent comp, ref IngestingEvent args)
+    private void OnIngesting(Entity<MindContainerComponent> ent, ref IngestingEvent args)
     {
-        if (!_mind.TryGetMind(uid, out _, out var mindComp, comp))
+        if (!_mind.TryGetMind(ent, out _, out var mindComp, ent.Comp))
             return;
 
         if (TryComp<EdibleComponent>(args.Food, out var edible))
@@ -49,7 +49,11 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
                 OnDrinkLiquid(args, mindComp);
         }
 
-        OnChewPaper(args.Food, mindComp);
+        // Only route to chew-paper if the item is NOT edible food/drink.
+        // An item with both EdibleComponent and PaperComponent (e.g. a hypothetical edible paper)
+        // should only be counted once — as food/drink, not as paper.
+        if (!HasComp<EdibleComponent>(args.Food))
+            OnChewPaper(args.Food, mindComp);
         OnIngestTarget(args.Food, mindComp);
     }
 
@@ -61,7 +65,6 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
                 continue;
 
             eatComp.Eaten++;
-            Dirty(objectiveUid, eatComp);
         }
     }
 
@@ -97,7 +100,6 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
                 continue;
 
             ingestComp.Ingested++;
-            Dirty(objectiveUid, ingestComp);
         }
     }
 
@@ -112,7 +114,6 @@ public sealed class CritterIngestedConditionSystem : EntitySystem
                 continue;
 
             chewComp.Chewed++;
-            Dirty(objectiveUid, chewComp);
         }
     }
 }
