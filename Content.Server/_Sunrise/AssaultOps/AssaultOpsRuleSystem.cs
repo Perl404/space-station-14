@@ -1,4 +1,5 @@
 using Content.Server._Sunrise.AssaultOps.Icarus;
+using Content.Server._Sunrise.GameTicking.PinnedOutcomes;
 using Content.Server.Antag;
 using Content.Server.Antag.Components;
 using Content.Server.GameTicking;
@@ -61,6 +62,7 @@ public sealed class AssaultOpsRuleSystem : GameRuleSystem<AssaultOpsRuleComponen
 
         SubscribeLocalEvent<AssaultOpsRuleComponent, AfterAntagEntitySelectedEvent>(OnAfterAntagEntSelected);
         SubscribeLocalEvent<AssaultOpsRuleComponent, RuleLoadedGridsEvent>(OnRuleLoadedGrids);
+        SubscribeLocalEvent<AssaultOpsRuleComponent, RoundEndPinnedOutcomeBuildEvent>(OnBuildPinnedOutcome);
     }
 
     protected override void Started(EntityUid uid,
@@ -347,27 +349,28 @@ public sealed class AssaultOpsRuleSystem : GameRuleSystem<AssaultOpsRuleComponen
         }
     }
 
-    protected override void AppendRoundEndText(EntityUid uid,
-        AssaultOpsRuleComponent component,
-        GameRuleComponent gameRule,
-        ref RoundEndTextAppendEvent args)
+    private void OnBuildPinnedOutcome(EntityUid uid, AssaultOpsRuleComponent component, RoundEndPinnedOutcomeBuildEvent ev)
     {
         var winText = Loc.GetString($"assaultops-{component.WinType.ToString().ToLower()}");
-        args.AddLine(winText);
+        ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(winText.Trim(), -2, 0, "assaultops"));
+
+        var result = new List<string>();
 
         foreach (var cond in component.WinConditions)
         {
             var text = Loc.GetString($"assaultops-cond-{cond.ToString().ToLower()}");
-            args.AddLine(text);
+            result.Add(text);
         }
 
-        args.AddLine(Loc.GetString("assaultops-list-start"));
+        result.Add(Loc.GetString("assaultops-list-start"));
 
         var antags =_antag.GetAntagIdentifiers(uid);
 
         foreach (var (_, sessionData, name) in antags)
         {
-            args.AddLine(Loc.GetString("assaultops-list-name", ("name", name), ("user", sessionData.UserName)));
+            result.Add(Loc.GetString("assaultops-list-name", ("name", name), ("user", sessionData.UserName)));
         }
+
+        ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(string.Join("\n", result).Trim(), -2, 1, "assaultops"));
     }
 }

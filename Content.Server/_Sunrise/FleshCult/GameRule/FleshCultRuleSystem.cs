@@ -1,6 +1,7 @@
 using System.Linq;
 using Content.Server.Antag;
 using Content.Server.Chat.Managers;
+using Content.Server._Sunrise.GameTicking.PinnedOutcomes;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules;
 using Content.Server.Mind;
@@ -36,7 +37,7 @@ public sealed class FleshCultRuleSystem : GameRuleSystem<FleshCultRuleComponent>
         base.Initialize();
 
         SubscribeLocalEvent<FleshCultRuleComponent, AfterAntagEntitySelectedEvent>(AfterEntitySelected);
-        SubscribeLocalEvent<FleshCultRuleComponent, ObjectivesTextPrependEvent>(OnObjectivesTextPrepend);
+        SubscribeLocalEvent<FleshCultRuleComponent, RoundEndPinnedOutcomeBuildEvent>(OnBuildPinnedOutcome);
         SubscribeLocalEvent<FleshCultSystem.FleshHeartStatusChangeEvent>(OnFleshHeartStatusChange);
     }
 
@@ -73,14 +74,6 @@ public sealed class FleshCultRuleSystem : GameRuleSystem<FleshCultRuleComponent>
             RemComp<FleshCultistComponent>(cultist);
         }
         QueueDel(uid);
-    }
-
-    private void OnObjectivesTextPrepend(EntityUid uid, FleshCultRuleComponent comp, ref ObjectivesTextPrependEvent args)
-    {
-        if (!TryComp(comp.CultistsLeaderMind, out MindComponent? mind))
-            return;
-        _player.TryGetSessionById(mind.UserId, out var session);
-        args.Text += "\n" + Loc.GetString("flesh-cult-round-end-leader", ("name", mind.CharacterName)!, ("username", session!.Name));
     }
 
     private void OnFleshHeartStatusChange(FleshCultSystem.FleshHeartStatusChangeEvent ev)
@@ -171,11 +164,15 @@ public sealed class FleshCultRuleSystem : GameRuleSystem<FleshCultRuleComponent>
         _chatManager.DispatchServerMessage(session, Loc.GetString("flesh-cult-role-cult-members", ("cultMembers", string.Join(", ", cultistsNames))));
     }
 
-    protected override void AppendRoundEndText(EntityUid uid,
-        FleshCultRuleComponent component,
-        GameRuleComponent gameRule,
-        ref RoundEndTextAppendEvent args)
+    private void OnBuildPinnedOutcome(EntityUid uid, FleshCultRuleComponent component, RoundEndPinnedOutcomeBuildEvent ev)
     {
+        if (TryComp(component.CultistsLeaderMind, out MindComponent? mind)
+            && _player.TryGetSessionById(mind.UserId, out var session))
+        {
+            var leaderOutcome = Loc.GetString("flesh-cult-round-end-leader", ("name", mind.CharacterName)!, ("username", session.Name));
+            ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(leaderOutcome.Trim(), -2, 0, "fleshcult"));
+        }
+
         var result = Loc.GetString("flesh-cult-round-end-count-create-flesh-hearts", ("heartsCount",
             component.FleshHearts.Count));
 
@@ -237,6 +234,6 @@ public sealed class FleshCultRuleSystem : GameRuleSystem<FleshCultRuleComponent>
             result += "\n" + Loc.GetString("flesh-cult-round-end-flesh-heart-fail");
         }
 
-        args.AddLine("\n" + result);
+        ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(result.Trim(), -2, 1, "fleshcult"));
     }
 }

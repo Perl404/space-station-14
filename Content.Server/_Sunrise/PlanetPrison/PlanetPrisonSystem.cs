@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Server._Sunrise.GameTicking.PinnedOutcomes;
 using Content.Server._Sunrise.NewLife;
 using Content.Server.Chat.Managers;
 using Content.Server.GameTicking;
@@ -45,6 +46,7 @@ namespace Content.Server._Sunrise.PlanetPrison
             SubscribeLocalEvent<PlanetPrisonerComponent, MindAddedMessage>(OnMindAdded);
             SubscribeLocalEvent<PlanetPrisonRuleComponent, ObjectivesTextGetInfoEvent>(OnObjectivesTextGetInfo);
             SubscribeLocalEvent<PlanetPrisonRuleComponent, ObjectivesTextPrependEvent>(OnObjectivesTextPrepend);
+            SubscribeLocalEvent<PlanetPrisonRuleComponent, RoundEndPinnedOutcomeBuildEvent>(OnBuildPinnedOutcome);
             SubscribeLocalEvent<PlanetPrisonerRoleComponent, GetBriefingEvent>(OnGetBriefing);
         }
 
@@ -59,16 +61,35 @@ namespace Content.Server._Sunrise.PlanetPrison
 
         private void OnObjectivesTextPrepend(EntityUid uid, PlanetPrisonRuleComponent comp, ref ObjectivesTextPrependEvent args)
         {
-            var planetPrisonRule = GetPlanetPrisonRule();
-            if (planetPrisonRule == null)
+            var outcome = BuildEscapedPrisonersOutcome();
+            if (string.IsNullOrWhiteSpace(outcome))
                 return;
-            args.Text += Loc.GetString("planet-prison-round-end-result", ("count", planetPrisonRule.EscapedPrisoners.Count));
+
+            args.Text += outcome;
+        }
+
+        private void OnBuildPinnedOutcome(EntityUid uid, PlanetPrisonRuleComponent comp, RoundEndPinnedOutcomeBuildEvent ev)
+        {
+            var outcome = BuildEscapedPrisonersOutcome();
+            if (string.IsNullOrWhiteSpace(outcome))
+                return;
+
+            ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(outcome, -3, 0, "planet-prison"));
         }
 
         private void OnObjectivesTextGetInfo(EntityUid uid, PlanetPrisonRuleComponent comp, ref ObjectivesTextGetInfoEvent args)
         {
             args.Minds = comp.PrisonersMinds;
             args.AgentName = Loc.GetString("planet-prisoner-round-end-name");
+        }
+
+        private string? BuildEscapedPrisonersOutcome()
+        {
+            var planetPrisonRule = GetPlanetPrisonRule();
+            if (planetPrisonRule == null)
+                return null;
+
+            return Loc.GetString("planet-prison-round-end-result", ("count", planetPrisonRule.EscapedPrisoners.Count));
         }
 
         public override void Update(float frameTime)

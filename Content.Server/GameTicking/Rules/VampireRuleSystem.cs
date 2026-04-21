@@ -1,5 +1,6 @@
 using Content.Server.Antag;
 using Content.Server.Atmos.Components;
+using Content.Server._Sunrise.GameTicking.PinnedOutcomes;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Mind;
 using Content.Server.Objectives;
@@ -52,6 +53,7 @@ public sealed partial class VampireRuleSystem : GameRuleSystem<VampireRuleCompon
         SubscribeLocalEvent<VampireRuleComponent, GetBriefingEvent>(OnGetBriefing);
         SubscribeLocalEvent<VampireRuleComponent, AfterAntagEntitySelectedEvent>(OnSelectAntag);
         SubscribeLocalEvent<VampireRuleComponent, ObjectivesTextPrependEvent>(OnTextPrepend);
+        SubscribeLocalEvent<VampireRuleComponent, RoundEndPinnedOutcomeBuildEvent>(OnBuildPinnedOutcome);
     }
 
     private void OnSelectAntag(EntityUid mindId, VampireRuleComponent comp, ref AfterAntagEntitySelectedEvent args)
@@ -138,6 +140,20 @@ public sealed partial class VampireRuleSystem : GameRuleSystem<VampireRuleCompon
 
     private void OnTextPrepend(EntityUid uid, VampireRuleComponent comp, ref ObjectivesTextPrependEvent args)
     {
+        args.Text = BuildMostDrainedOutcome();
+    }
+
+    private void OnBuildPinnedOutcome(EntityUid uid, VampireRuleComponent comp, RoundEndPinnedOutcomeBuildEvent ev)
+    {
+        var outcome = BuildMostDrainedOutcome();
+        if (string.IsNullOrWhiteSpace(outcome))
+            return;
+
+        ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(outcome.Trim(), -2, 0, "vampire"));
+    }
+
+    private string BuildMostDrainedOutcome()
+    {
         var mostDrainedName = string.Empty;
         var mostDrained = 0f;
 
@@ -156,9 +172,6 @@ public sealed partial class VampireRuleSystem : GameRuleSystem<VampireRuleCompon
             }
         }
 
-        var sb = new StringBuilder();
-        sb.AppendLine(Loc.GetString($"roundend-prepend-vampire-drained{(!string.IsNullOrWhiteSpace(mostDrainedName) ? "-named" : "")}", ("name", mostDrainedName), ("number", mostDrained)));
-
-        args.Text = sb.ToString();
+        return Loc.GetString($"roundend-prepend-vampire-drained{(!string.IsNullOrWhiteSpace(mostDrainedName) ? "-named" : "")}", ("name", mostDrainedName), ("number", mostDrained));
     }
 }

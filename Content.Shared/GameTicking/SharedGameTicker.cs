@@ -214,6 +214,8 @@ namespace Content.Shared.GameTicking
         public RoundEndPlayerInfo[] AllPlayersEndInfo { get; }
         public string RoundEndStats { get; } // Sunrise-Edit
         public SharedStatisticEntry[] StatisticEntries { get; } // Sunrise-Edit
+        public RoundEndKeyOutcome[] RoundEndKeyOutcomes { get; } // Sunrise-Add
+        public RoundEndSection[] RoundEndSections { get; } // Sunrise-Add
 
         /// <summary>
         /// Sound gets networked due to how entity lifecycle works between client / server and to avoid clipping.
@@ -229,6 +231,8 @@ namespace Content.Shared.GameTicking
             RoundEndPlayerInfo[] allPlayersEndInfo,
             string roundEndStats, // Sunrise-Edit
             SharedStatisticEntry[] statisticEntries, // Sunrise-Edit
+            RoundEndKeyOutcome[] roundEndKeyOutcomes, // Sunrise-Add
+            RoundEndSection[] roundEndSections, // Sunrise-Add
             ResolvedSoundSpecifier? restartSound)
         {
             GamemodeTitle = gamemodeTitle;
@@ -239,6 +243,8 @@ namespace Content.Shared.GameTicking
             AllPlayersEndInfo = allPlayersEndInfo;
             RoundEndStats = roundEndStats; // Sunrise-Edit
             StatisticEntries = statisticEntries; // Sunrise-Edit
+            RoundEndKeyOutcomes = roundEndKeyOutcomes; // Sunrise-Add
+            RoundEndSections = roundEndSections; // Sunrise-Add
             RestartSound = restartSound;
         }
     }

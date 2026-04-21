@@ -1,4 +1,5 @@
 using Content.Server.Antag;
+using Content.Server._Sunrise.GameTicking.PinnedOutcomes;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Mind;
 using Content.Server.Objectives;
@@ -43,7 +44,7 @@ public sealed class TraitorRuleSystem : GameRuleSystem<TraitorRuleComponent>
         Log.Level = LogLevel.Debug;
 
         SubscribeLocalEvent<TraitorRuleComponent, AfterAntagEntitySelectedEvent>(AfterEntitySelected);
-        SubscribeLocalEvent<TraitorRuleComponent, ObjectivesTextPrependEvent>(OnObjectivesTextPrepend);
+        SubscribeLocalEvent<TraitorRuleComponent, RoundEndPinnedOutcomeBuildEvent>(OnBuildPinnedOutcome);
     }
 
     private void AfterEntitySelected(Entity<TraitorRuleComponent> ent, ref AfterAntagEntitySelectedEvent args)
@@ -187,10 +188,13 @@ public sealed class TraitorRuleSystem : GameRuleSystem<TraitorRuleComponent>
     }
 
     // TODO: AntagCodewordsComponent
-    private void OnObjectivesTextPrepend(EntityUid uid, TraitorRuleComponent comp, ref ObjectivesTextPrependEvent args)
+    private void OnBuildPinnedOutcome(EntityUid uid, TraitorRuleComponent comp, RoundEndPinnedOutcomeBuildEvent ev)
     {
-        if(comp.GiveCodewords)
-            args.Text += "\n" + Loc.GetString("traitor-round-end-codewords", ("codewords", string.Join(", ", _codewordSystem.GetCodewords(comp.CodewordFactionPrototypeId))));
+        if (!comp.GiveCodewords)
+            return;
+
+        var outcome = Loc.GetString("traitor-round-end-codewords", ("codewords", string.Join(", ", _codewordSystem.GetCodewords(comp.CodewordFactionPrototypeId))));
+        ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(outcome.Trim(), -2, 0, "traitor"));
     }
 
     // TODO: figure out how to handle this? add priority to briefing event?

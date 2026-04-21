@@ -309,3 +309,5 @@ Resources/MapImages
 
 # Direnv stuff
 .direnv/
+SUNRISE_AGENT_ROADMAP.md
+SUNRISE_AGENT_SYSTEM_PROMPT.md

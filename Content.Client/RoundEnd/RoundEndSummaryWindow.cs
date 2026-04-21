@@ -4,6 +4,7 @@ using Content.Client._Sunrise.StatsBoard;
 using Content.Client.Message;
 using Content.Shared._Sunrise.StatsBoard;
 using Content.Shared.GameTicking;
+using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.CustomControls;
 using Robust.Shared.Player;
@@ -18,13 +19,15 @@ namespace Content.Client.RoundEnd
         private readonly ISharedPlayerManager _playerManager;
         public int RoundId;
 
+        // Sunrise edit start - add sunrise round end stats dependencies
         public RoundEndSummaryWindow(string gm, string roundEnd, TimeSpan roundTimeSpan, int roundId,
-            RoundEndMessageEvent.RoundEndPlayerInfo[] info, string roundEndStats, SharedStatisticEntry[] statisticEntries, IEntityManager entityManager, ISharedPlayerManager playerManager) // Sunrise-Edit
+            RoundEndMessageEvent.RoundEndPlayerInfo[] info, string roundEndStats, SharedStatisticEntry[] statisticEntries, RoundEndKeyOutcome[] roundEndKeyOutcomes, RoundEndSection[] roundEndSections, IEntityManager entityManager, ISharedPlayerManager playerManager)
         {
             _entityManager = entityManager;
-            _playerManager = playerManager; // Sunrise-Edit
+            _playerManager = playerManager;
 
-            MinSize = SetSize = new Vector2(700, 600); // Sunrise-Edit
+            MinSize = SetSize = new Vector2(700, 600);
+            // Sunrise edit end
 
             Title = Loc.GetString("round-end-summary-window-title");
 
@@ -36,9 +39,11 @@ namespace Content.Client.RoundEnd
 
             RoundId = roundId;
             var roundEndTabs = new TabContainer();
-            roundEndTabs.AddChild(MakeRoundEndStatsTab(roundEndStats)); // Sunrise-End
-            roundEndTabs.AddChild(MakeRoundEndMyStatsTab(statisticEntries)); // Sunrise-End
-            roundEndTabs.AddChild(MakeRoundEndSummaryTab(gm, roundEnd, roundTimeSpan, roundId));
+            // Sunrise edit start - add sunrise round end stats tabs
+            roundEndTabs.AddChild(MakeRoundEndStatsTab(roundEndStats));
+            roundEndTabs.AddChild(MakeRoundEndMyStatsTab(statisticEntries));
+            // Sunrise edit end
+            roundEndTabs.AddChild(MakeRoundEndSummaryTab(gm, roundEnd, roundTimeSpan, roundId, roundEndKeyOutcomes, roundEndSections));
             roundEndTabs.AddChild(MakePlayerManifestTab(info));
 
             ContentsContainer.AddChild(roundEndTabs);
@@ -47,7 +52,7 @@ namespace Content.Client.RoundEnd
             MoveToFront();
         }
 
-        private BoxContainer MakeRoundEndSummaryTab(string gamemode, string roundEnd, TimeSpan roundDuration, int roundId)
+        private BoxContainer MakeRoundEndSummaryTab(string gamemode, string roundEnd, TimeSpan roundDuration, int roundId, RoundEndKeyOutcome[] roundEndKeyOutcomes, RoundEndSection[] roundEndSections)
         {
             var roundEndSummaryTab = new BoxContainer
             {
@@ -82,19 +87,92 @@ namespace Content.Client.RoundEnd
                                                    ("seconds", roundDuration.Seconds)));
             roundEndSummaryContainer.AddChild(roundTimeLabel);
 
+            if (roundEndKeyOutcomes.Length > 0)
+            {
+                roundEndSummaryContainer.AddChild(MakeKeyOutcomesBlock(roundEndKeyOutcomes));
+            }
+
             //Round end text
             if (!string.IsNullOrEmpty(roundEnd))
             {
-                var roundEndLabel = new RichTextLabel();
+                var roundEndLabel = new RichTextLabel
+                {
+                    Margin = new Thickness(0, 6, 0, 0)
+                };
                 roundEndLabel.SetMarkup(roundEnd);
                 roundEndSummaryContainer.AddChild(roundEndLabel);
             }
+
+            // Sunrise added start - render round end sections
+            foreach (var section in roundEndSections)
+            {
+                roundEndSummaryContainer.AddChild(MakeRoundEndSection(section));
+            }
+            // Sunrise added end
 
             roundEndSummaryContainerScrollbox.AddChild(roundEndSummaryContainer);
             roundEndSummaryTab.AddChild(roundEndSummaryContainerScrollbox);
 
             return roundEndSummaryTab;
         }
+
+        private Control MakeKeyOutcomesBlock(RoundEndKeyOutcome[] outcomes)
+        {
+            var container = new BoxContainer
+            {
+                Orientation = LayoutOrientation.Vertical,
+                Margin = new Thickness(0, 8, 0, 4)
+            };
+
+            var title = new RichTextLabel();
+            title.SetMarkup(Loc.GetString("round-end-summary-window-key-outcomes-title"));
+            container.AddChild(title);
+
+            foreach (var outcome in outcomes)
+            {
+                var line = new RichTextLabel
+                {
+                    Margin = new Thickness(8, 2, 0, 0)
+                };
+
+                var color = string.IsNullOrWhiteSpace(outcome.Color) ? "white" : outcome.Color;
+                line.SetMarkup(Loc.GetString("round-end-summary-window-key-outcomes-entry", ("color", color), ("text", outcome.Text)));
+                container.AddChild(line);
+            }
+
+            return container;
+        }
+
+        // Sunrise added start - helper to create round end sections
+        private Control MakeRoundEndSection(RoundEndSection section)
+        {
+            var heading = new CollapsibleHeading(section.Title)
+            {
+                ChevronMargin = new Thickness(6, 0, 10, 0),
+                MinHeight = 28,
+                Margin = new Thickness(0, 6, 0, 0)
+            };
+
+            var body = new CollapsibleBody
+            {
+                Margin = new Thickness(12, 4, 0, 2)
+            };
+
+            var text = new RichTextLabel();
+            if (!string.IsNullOrWhiteSpace(section.Text))
+                text.SetMarkup(section.Text);
+
+            body.AddChild(text);
+
+            var collapsible = new Collapsible(heading, body)
+            {
+                BodyVisible = !section.StartCollapsed
+            };
+
+            heading.OnPressed += _ => collapsible.BodyVisible = !collapsible.BodyVisible;
+            return collapsible;
+        }
+        // Sunrise added end
 
         private BoxContainer MakePlayerManifestTab(RoundEndMessageEvent.RoundEndPlayerInfo[] playersInfo)
         {
@@ -174,7 +252,7 @@ namespace Content.Client.RoundEnd
             return playerManifestTab;
         }
 
-        // Sunrise-Start
+        // Sunrise added start - round end stats tabs
         private BoxContainer MakeRoundEndStatsTab(string stats)
         {
             var roundEndSummaryTab = new BoxContainer
@@ -243,7 +321,7 @@ namespace Content.Client.RoundEnd
 
             return roundEndSummaryTab;
         }
-        // Sunrise-End
+        // Sunrise added end
     }
 
 }

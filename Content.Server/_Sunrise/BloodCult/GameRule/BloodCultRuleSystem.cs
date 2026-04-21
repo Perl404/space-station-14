@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Content.Server._Sunrise.GameTicking.PinnedOutcomes;
 using Content.Server._Sunrise.BloodCult.Objectives.Components;
 using Content.Server._Sunrise.BloodCult.Objectives.Systems;
 using Content.Server._Sunrise.BloodCult.Runes.Systems;
@@ -76,6 +77,7 @@ public sealed class BloodCultRuleSystem : GameRuleSystem<BloodCultRuleComponent>
 
         SubscribeLocalEvent<BloodCultRuleComponent, AfterAntagEntitySelectedEvent>(AfterEntitySelected);
         SubscribeLocalEvent<BloodCultRuleComponent, AntagSelectionCompleteEvent>(OnAfterAntagSelectionComplete);
+        SubscribeLocalEvent<BloodCultRuleComponent, RoundEndPinnedOutcomeBuildEvent>(OnBuildPinnedOutcome);
     }
 
     private void OnCultTargetEnterCryo(EntityUid uid, BloodCultTargetComponent component, CryostorageEnteredEvent args)
@@ -191,23 +193,25 @@ public sealed class BloodCultRuleSystem : GameRuleSystem<BloodCultRuleComponent>
         component.CultType = _random.Pick(cultTypes);
     }
 
-    protected override void AppendRoundEndText(EntityUid uid,
-        BloodCultRuleComponent component,
-        GameRuleComponent gameRule,
-        ref RoundEndTextAppendEvent args)
+    private void OnBuildPinnedOutcome(EntityUid uid, BloodCultRuleComponent component, RoundEndPinnedOutcomeBuildEvent ev)
     {
         var winText = Loc.GetString($"cult-cond-{component.WinCondition.ToString().ToLower()}");
-        args.AddLine(winText);
+        ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(winText.Trim(), -2, 0, "bloodcult"));
 
-        args.AddLine(Loc.GetString("cultists-list-start"));
+        var result = new List<string>
+        {
+            Loc.GetString("cultists-list-start")
+        };
 
         var antags = _antagSelection.GetAntagIdentifiers(uid);
 
         foreach (var (_, sessionData, name) in antags)
         {
             var lising = Loc.GetString("cultists-list-name", ("name", name), ("user", sessionData.UserName));
-            args.AddLine(lising);
+            result.Add(lising);
         }
+
+        ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(string.Join("\n", result).Trim(), -2, 1, "bloodcult"));
     }
 
     private void AfterEntitySelected(Entity<BloodCultRuleComponent> ent, ref AfterAntagEntitySelectedEvent args)

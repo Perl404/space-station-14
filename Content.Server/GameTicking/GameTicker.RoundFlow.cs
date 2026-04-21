@@ -626,6 +626,14 @@ namespace Content.Server.GameTicking
             var sharedEntries = statisticEntries.Select(entry => _statsBoardSystem.ConvertToSharedStatisticEntry(entry)).ToArray();
             // Sunrise-End
 
+            // Sunrise added start - build structured round-end summary payload for UI.
+            var roundEndSectionSystem = EntityManager.System<Content.Server._Sunrise.GameTicking.RoundEndSectionSystem>();
+            var roundEndKeyOutcomes = roundEndSectionSystem.BuildKeyOutcomes(roundEndText);
+            var roundEndSectionsList = roundEndSectionSystem.BuildSections().ToList();
+            roundEndText = roundEndSectionSystem.WrapVanillaObjectivesInSection(roundEndText, ref roundEndSectionsList);
+            var roundEndSections = roundEndSectionsList.ToArray();
+            // Sunrise added end
+
             var roundEndMessageEvent = new RoundEndMessageEvent(
                 gamemodeTitle,
                 roundEndText,
@@ -635,6 +643,8 @@ namespace Content.Server.GameTicking
                 listOfPlayerInfoFinal,
                 roundStats, // Sunrise-Edit
                 sharedEntries, // Sunrise-Edit
+                roundEndKeyOutcomes, // Sunrise-Add
+                roundEndSections, // Sunrise-Add
                 sound
             );
             RaiseNetworkEvent(roundEndMessageEvent);

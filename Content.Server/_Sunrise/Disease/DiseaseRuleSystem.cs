@@ -1,6 +1,7 @@
 // © SUNRISE, An EULA/CLA with a hosting restriction, full text: https://github.com/space-sunrise/space-station-14/blob/master/CLA.txt
 
 using Content.Shared._Sunrise.Disease;
+using Content.Server._Sunrise.GameTicking.PinnedOutcomes;
 using Content.Server.Objectives;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules;
@@ -19,6 +20,7 @@ public sealed class DiseaseRuleSystem : GameRuleSystem<DiseaseRuleComponent>
         base.Initialize();
 
         SubscribeLocalEvent<DiseaseRuleComponent, ObjectivesTextGetInfoEvent>(OnObjectivesTextGetInfo);
+        SubscribeLocalEvent<DiseaseRuleComponent, RoundEndPinnedOutcomeBuildEvent>(OnBuildPinnedOutcome);
     }
 
     protected override void Started(EntityUid uid, DiseaseRuleComponent component, GameRuleComponent gameRule, GameRuleStartedEvent args)
@@ -40,10 +42,7 @@ public sealed class DiseaseRuleSystem : GameRuleSystem<DiseaseRuleComponent>
         args.AgentName = Loc.GetString("disease-agent-name");
     }
 
-    protected override void AppendRoundEndText(EntityUid uid,
-        DiseaseRuleComponent component,
-        GameRuleComponent gameRule,
-        ref RoundEndTextAppendEvent args)
+    private void OnBuildPinnedOutcome(EntityUid uid, DiseaseRuleComponent component, RoundEndPinnedOutcomeBuildEvent ev)
     {
         var sick = EntityQueryEnumerator<SickComponent>();
         var immune = EntityQueryEnumerator<DiseaseImmuneComponent>();
@@ -63,9 +62,13 @@ public sealed class DiseaseRuleSystem : GameRuleSystem<DiseaseRuleComponent>
         {
             infected = comp.SickOfAllTime;
         }
-        args.AddLine(Loc.GetString("disease-round-end-result"));
-        args.AddLine(Loc.GetString("disease-round-end-result-infected", ("count", infected)));
-        args.AddLine(Loc.GetString("disease-round-end-result-infects", ("count", infects)));
-        args.AddLine(Loc.GetString("disease-round-end-result-immuned", ("count", immuned)));
+
+        var result = string.Join("\n",
+            Loc.GetString("disease-round-end-result"),
+            Loc.GetString("disease-round-end-result-infected", ("count", infected)),
+            Loc.GetString("disease-round-end-result-infects", ("count", infects)),
+            Loc.GetString("disease-round-end-result-immuned", ("count", immuned)));
+
+        ev.AddFragment(RoundEndPinnedOutcomeBuilder.Explicit(result.Trim(), -2, 0, "disease"));
     }
 }
