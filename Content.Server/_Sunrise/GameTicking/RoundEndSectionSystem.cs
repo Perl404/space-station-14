@@ -327,6 +327,11 @@ public sealed class RoundEndSectionSystem : EntitySystem
 
     public string WrapVanillaObjectivesInSection(string roundEndText, ref List<RoundEndSection> sections)
     {
+        // If we already have sections from BuildSections(), don't wrap objectives
+        // (they're already included in sections)
+        if (sections.Count > 0)
+            return roundEndText;
+
         // Extract objectives text from vanilla round end text
         var objectivesStart = roundEndText.IndexOf("\n\n", StringComparison.Ordinal);
         if (objectivesStart == -1)
@@ -343,7 +348,7 @@ public sealed class RoundEndSectionSystem : EntitySystem
             true
         );
 
-        sections.Insert(0, objectivesSection);
+        sections.Add(objectivesSection);
 
         // Remove objectives from round end text to avoid duplication
         return roundEndText.Substring(0, objectivesStart).TrimEnd();
