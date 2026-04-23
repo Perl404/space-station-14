@@ -15,6 +15,25 @@ public sealed partial class CorporateLawUiFragment : BoxContainer
     private static readonly Color BackgroundColor = Color.FromHex("#1a2332");
     private static readonly Color BackgroundColorDark = Color.FromHex("#141a26");
 
+    private static readonly Color NoConnectionAccent = Color.FromHex("#ff4d4d");
+    private static readonly Color NoConnectionMuted = Color.FromHex("#8d9bb2");
+
+    private static readonly StyleBoxFlat NoConnectionPanelStyle = new()
+    {
+        BackgroundColor = NoConnectionAccent.WithAlpha(0.08f),
+        BorderColor = NoConnectionAccent.WithAlpha(0.5f),
+        BorderThickness = new Thickness(2),
+        ContentMarginLeftOverride = 24,
+        ContentMarginRightOverride = 24,
+        ContentMarginTopOverride = 20,
+        ContentMarginBottomOverride = 20
+    };
+
+    private static readonly StyleBoxFlat NoConnectionDividerStyle = new()
+    {
+        BackgroundColor = NoConnectionAccent.WithAlpha(0.35f)
+    };
+
     public CorporateLawUiFragment()
     {
         RobustXamlLoader.Load(this);
@@ -166,23 +185,9 @@ public sealed partial class CorporateLawUiFragment : BoxContainer
 
     private static Control BuildNoConnectionPanel()
     {
-        var accent = Color.FromHex("#ff4d4d");
-        var muted = Color.FromHex("#8d9bb2");
-
-        var panelStyle = new StyleBoxFlat
-        {
-            BackgroundColor = accent.WithAlpha(0.08f),
-            BorderColor = accent.WithAlpha(0.5f),
-            BorderThickness = new Thickness(2),
-            ContentMarginLeftOverride = 24,
-            ContentMarginRightOverride = 24,
-            ContentMarginTopOverride = 20,
-            ContentMarginBottomOverride = 20
-        };
-
         var panel = new PanelContainer
         {
-            PanelOverride = panelStyle,
+            PanelOverride = NoConnectionPanelStyle,
             HorizontalAlignment = Control.HAlignment.Center,
             VerticalAlignment = Control.VAlignment.Center,
             Margin = new Thickness(16)
@@ -200,12 +205,12 @@ public sealed partial class CorporateLawUiFragment : BoxContainer
             HorizontalAlignment = Control.HAlignment.Center
         };
         heading.SetMessage(FormattedMessage.FromMarkupOrThrow(
-            $"[color={accent.ToHex()}][font size=18][bold]⚠  {Loc.GetString("corplaw-no-connection")}[/bold][/font][/color]"));
+            $"[color={NoConnectionAccent.ToHex()}][font size=18][bold]⚠  {Loc.GetString("corplaw-no-connection")}[/bold][/font][/color]"));
         content.AddChild(heading);
 
         var divider = new PanelContainer
         {
-            PanelOverride = new StyleBoxFlat { BackgroundColor = accent.WithAlpha(0.35f) },
+            PanelOverride = NoConnectionDividerStyle,
             MinHeight = 1,
             HorizontalExpand = true,
             Margin = new Thickness(0, 2, 0, 2)
@@ -218,7 +223,7 @@ public sealed partial class CorporateLawUiFragment : BoxContainer
             MaxWidth = 360
         };
         desc.SetMessage(FormattedMessage.FromMarkupOrThrow(
-            $"[color={muted.ToHex()}]{Loc.GetString("corplaw-no-connection-desc")}[/color]"));
+            $"[color={NoConnectionMuted.ToHex()}]{Loc.GetString("corplaw-no-connection-desc")}[/color]"));
         content.AddChild(desc);
 
         panel.AddChild(content);
