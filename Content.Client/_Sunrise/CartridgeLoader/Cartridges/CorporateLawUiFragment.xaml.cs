@@ -26,6 +26,22 @@ public sealed partial class CorporateLawUiFragment : BoxContainer
         MainContainer.DisposeAllChildren();
         MainContainer.SeparationOverride = 8;
 
+        if (!state.Connected)
+        {
+            var noConnectionLabel = new RichTextLabel
+            {
+                HorizontalAlignment = Control.HAlignment.Center,
+                VerticalAlignment = Control.VAlignment.Center,
+                HorizontalExpand = true,
+                VerticalExpand = true,
+                Margin = new Thickness(16)
+            };
+            noConnectionLabel.SetMessage(FormattedMessage.FromMarkupOrThrow(
+                $"[color={HeaderColor.ToHex()}][bold]{Loc.GetString("corplaw-no-connection")}[/bold][/color]"));
+            MainContainer.AddChild(noConnectionLabel);
+            return;
+        }
+
         foreach (var section in state.Sections)
         {
             var sectionColor = section.Color ?? HeaderColor;
