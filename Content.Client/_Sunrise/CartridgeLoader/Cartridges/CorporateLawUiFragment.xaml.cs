@@ -28,17 +28,7 @@ public sealed partial class CorporateLawUiFragment : BoxContainer
 
         if (!state.Connected)
         {
-            var noConnectionLabel = new RichTextLabel
-            {
-                HorizontalAlignment = Control.HAlignment.Center,
-                VerticalAlignment = Control.VAlignment.Center,
-                HorizontalExpand = true,
-                VerticalExpand = true,
-                Margin = new Thickness(16)
-            };
-            noConnectionLabel.SetMessage(FormattedMessage.FromMarkupOrThrow(
-                $"[color={HeaderColor.ToHex()}][bold]{Loc.GetString("corplaw-no-connection")}[/bold][/color]"));
-            MainContainer.AddChild(noConnectionLabel);
+            MainContainer.AddChild(BuildNoConnectionPanel());
             return;
         }
 
@@ -172,5 +162,66 @@ public sealed partial class CorporateLawUiFragment : BoxContainer
 
             sectionHeading.OnPressed += _ => sectionCollapsible.BodyVisible = !sectionCollapsible.BodyVisible;
         }
+    }
+
+    private static Control BuildNoConnectionPanel()
+    {
+        var accent = Color.FromHex("#ff4d4d");
+        var muted = Color.FromHex("#8d9bb2");
+
+        var panelStyle = new StyleBoxFlat
+        {
+            BackgroundColor = accent.WithAlpha(0.08f),
+            BorderColor = accent.WithAlpha(0.5f),
+            BorderThickness = new Thickness(2),
+            ContentMarginLeftOverride = 24,
+            ContentMarginRightOverride = 24,
+            ContentMarginTopOverride = 20,
+            ContentMarginBottomOverride = 20
+        };
+
+        var panel = new PanelContainer
+        {
+            PanelOverride = panelStyle,
+            HorizontalAlignment = Control.HAlignment.Center,
+            VerticalAlignment = Control.VAlignment.Center,
+            Margin = new Thickness(16)
+        };
+
+        var content = new BoxContainer
+        {
+            Orientation = LayoutOrientation.Vertical,
+            HorizontalAlignment = Control.HAlignment.Center,
+            SeparationOverride = 8
+        };
+
+        var heading = new RichTextLabel
+        {
+            HorizontalAlignment = Control.HAlignment.Center
+        };
+        heading.SetMessage(FormattedMessage.FromMarkupOrThrow(
+            $"[color={accent.ToHex()}][font size=18][bold]⚠  {Loc.GetString("corplaw-no-connection")}[/bold][/font][/color]"));
+        content.AddChild(heading);
+
+        var divider = new PanelContainer
+        {
+            PanelOverride = new StyleBoxFlat { BackgroundColor = accent.WithAlpha(0.35f) },
+            MinHeight = 1,
+            HorizontalExpand = true,
+            Margin = new Thickness(0, 2, 0, 2)
+        };
+        content.AddChild(divider);
+
+        var desc = new RichTextLabel
+        {
+            HorizontalAlignment = Control.HAlignment.Center,
+            MaxWidth = 360
+        };
+        desc.SetMessage(FormattedMessage.FromMarkupOrThrow(
+            $"[color={muted.ToHex()}]{Loc.GetString("corplaw-no-connection-desc")}[/color]"));
+        content.AddChild(desc);
+
+        panel.AddChild(content);
+        return panel;
     }
 }
