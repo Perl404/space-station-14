@@ -707,8 +707,11 @@ public sealed partial class ShuttleSystem
                 // Only stun mobs/entities with status effects
                 _stuns.TryUpdateParalyzeDuration(child, _hyperspaceKnockdownTime);
 
-                // Sunrise-Start: Throw ALL dynamic entities in the list (including items and structures)
-                if (_physicsQuery.TryGetComponent(child, out var physics))
+                // Sunrise-Start: Throw dynamic entities (items, structures) so they fly with the
+                // shuttle's inertia. Skip mobs (KinematicController) — they are already paralyzed
+                // above; throwing them at high velocity inside small shuttles like the arrivals
+                // one slams them into walls and can deal lethal damage.
+                if (_physicsQuery.TryGetComponent(child, out var physics) && physics.BodyType == BodyType.Dynamic)
                 {
                     _throwing.TryThrow(child,
                         throwDirection * _ftlThrowForce,
